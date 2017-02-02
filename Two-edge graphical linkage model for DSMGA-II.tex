@@ -394,19 +394,6 @@ Although two-edge AMWCS takes the receiver  into account and performs more effec
 
 To avoid supply overfitting, we adopt one-edge AMWCS for the supply bound. The concept is that one-edge uses the complete mutual information instead of divided one. It means that unlike two-edge AMWCS, one-edge AMWCS follows the global information between bits  and does not overfit supply. We also find that the one-edge supply bound benefits the restricted mixing. The reason we speculated is that in the early stage, the information for model building is not clear and not accurate yet, so the restricted mixing usually fails. Due to the much longer length of supply and the restricted mixing operator is terminated only if the receiver’s fitness gets better or the supply check does not pass, two-edge AMWCS  wastes much more NFE in restricted mixing. With the smaller supply length one-edge AMWCS produced, it unexpected benefits the restricted mixing as well.   
 
-
-\subsection{Chromosome Existence Check}
-%Break prevents possible cross over and limit attempts for useless function call. 
-%Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
-%If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
-
-In restricted mixing, the procedure is not terminated when the receiver is flipped to the pattern which has already existed in the population even though the flipped pattern leads to improvement. The procedure calls the continue operator instead. Nevertheless, we find that this criterion leads to extra cross-competition. For example, consider a problem which contains two subproblem with the same suboptimum pattern 111 and pattern 000000 exists in the population. In restricted mixing, if the receiver’s pattern is 111000, even though the procedure flipped it to 000000 which has already exists, restricted mixing calls the continue operator and keeps trying bit-flipping. Thus, the chromosome can be flipped to 000111 and starts the backmixing. Under this circumstance, the chromosomes in the population with the pattern 111 in the first subproblem are possibly being replaced with pattern 000. This phenomenon increases the probability of ruining optimum and NFEs. 
-
-
-To prevent this situation, we substitute the continue operator to break for chromosome existence check. This method would terminate restricted mixing and change another chromosome into receiver. The pseudo code of modified restricted mixing is given in Algorithm 4. 
-
-
-
 \begin{algorithm}
 \caption{Restricted Mixing}\label{algo_disjdecomp}
 
@@ -458,6 +445,19 @@ remove $v$ from $V$ \\
 }
 \Return ($R$, $\emptyset$) 
 \end{algorithm}
+
+\subsection{Chromosome Existence Check}
+%Break prevents possible cross over and limit attempts for useless function call. 
+%Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
+%If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
+
+In restricted mixing, the procedure is not terminated when the receiver is flipped to the pattern which has already existed in the population even though the flipped pattern leads to improvement. The procedure calls the continue operator instead. Nevertheless, we find that this criterion leads to extra cross-competition. For example, consider a problem which contains two subproblem with the same suboptimum pattern 111 and pattern 000000 exists in the population. In restricted mixing, if the receiver’s pattern is 111000, even though the procedure flipped it to 000000 which has already exists, restricted mixing calls the continue operator and keeps trying bit-flipping. Thus, the chromosome can be flipped to 000111 and starts the backmixing. Under this circumstance, the chromosomes in the population with the pattern 111 in the first subproblem are possibly being replaced with pattern 000. This phenomenon increases the probability of ruining optimum and NFEs. 
+
+
+To prevent this situation, we substitute the continue operator to break for chromosome existence check. This method would terminate restricted mixing and change another chromosome into receiver. The pseudo code of modified restricted mixing is given in Algorithm 4. 
+
+
+
 
 
 
@@ -579,7 +579,7 @@ Similar to LT-GOMEA, hBOA is also a milestone that is often used in recent EDA r
 
 
 A minimum population is required for a certain number of consecutive successful runs.
-However, the conventional bisection procedure~\cite{} often failed to yield the minimum NFE, since the minimum population size varies in the bisection procedure for different algorithms.
+However, the conventional bisection procedure~\cite{pelikan:hBOA} often failed to yield the minimum NFE, since the minimum population size varies in the bisection procedure for different algorithms.
 In the following experiments, we adopt an adaptive sweeping procedure for more accurate search of minimum NFE.
 The sweeping procedure starts with a reasonalbe population size.
 The initial population size is set as 10 in this paper.
@@ -601,23 +601,47 @@ LT-GOMEA is performed without local searh to enhance its performance, described 
 
 \subsection{Results}
 
+\subsubsection{ Comparison with the original DSMGA-II }
 
 \begin{table}[ht]
 \centering
 \begin{tabular}{ |c|c|c|c| } \hline
-Problems& Original &Improved &Ratio\\ \hline
-Concatenated trap,\textit{l=400} 	& 1,000& 1000&1\%\\ \hline
-Cyclic trap,\textit{ l = 400} 		& 1,000& 1000&1\%\\ \hline
-Folded trap,\textit{ l = 480}	 	& 1,000& 1000&1\%\\ \hline
-NK-S1,\textit{ l = 400} 				& 1,000& 1000&1\%\\ \hline
-NK-S3,\textit{ l = 400} 				& 1,000& 1000&1\%\\ \hline
-NK-S5,\textit{ l = 400} 				& 1,000& 1000&1\%\\ \hline
-Ising spin-glass,\textit{ l = 400} 	& 1,000& 1000&1\%\\ \hline
-MAX-SAT,\textit{ l = 200} 			& 1,000& 1000&1\%\\ \hline
+\textbf{Problems}& \textbf{Original} & \textbf{Improved} & \textbf{Ratio}\\ \hline
+\textbf{Concat. trap}, $\ell = 400$ 	& 1,000& 1000&1\%\\ \hline
+\textbf{Cyclic trap}, $\ell = 400$ 		& 1,000& 1000&1\%\\ \hline
+\textbf{Folded trap}, $\ell = 480$	 	& 1,000& 1000&1\%\\ \hline
+\textbf{NK-S1}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
+\textbf{NK-S3}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
+\textbf{NK-S5}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
+\textbf{Ising spin-glass}, $\ell = 784$ 	& 1,000& 1000&1\%\\ \hline
+\textbf{MAX-SAT}, $\ell = 200$ 			& 1,000& 1000&1\%\\ \hline
 \end{tabular}
 \caption{Required NFE of DSMGA-II for the largest test problems}
 \end{table}
 
+Comparing with the original DSMGA-II, our new techniques show superior performance on all six benchmark problems.
+In Table 2, comparison between our new techniques along with the original DSMGA-II are shown only with the largest problem size since the improvement is relatively minor with smaller problems. 
+The results indicate that our new techniques can reduce NFE up to 30\% compared to the original DSMGA-II. 
+
+
+Our new technique is most effective when dealing with folded trap problems.
+The two-edge AMWCS is capable of constructing customized models for a chosen receiver. 
+This characteristic shows great advantage when facing problems with multiple equal-quality subsolution, such as folded trap problems.
+Since the two-edge model tends to align with the most promenant pattern in the population, it cost less NFE to jump out of plateaus by converging through stronger drifting effect.
+
+
+This characteristic is also helpful with solving Ising spin-glass problems. 
+There are often two equal-fitness subsolutions in the spin-glass problem.
+The original DSMGA-II can only detect the strong linkage of the subsolution without knowing the correct pattern of the subsolution to contribute to global fitness.
+This results in a notable waste of NFE when repeatedly flipping subsolution patterns to another equally fit subsolution during mixing.
+With the two-edge AMWCS, different models can be generated with the same linkage graph. 
+Empirically, this helps preserve the optimal patterns during mixing and reduce attempts of trying the complementary pattern.
+
+
+The improved DSMGA-II requires less NFE than both LT-GOMEA and hBOA on all six benchmark problems.
+It is worth mentioning that most of the slope of DSMGA-II data line decreases as the problem size increases.
+This indicates that the improved DSMGA-II excels in scalability.
+The following parts divides the six benchmark problems in three categories according to their characteristics. 
 
 
 \begin{figure}
@@ -626,6 +650,33 @@ MAX-SAT,\textit{ l = 200} 			& 1,000& 1000&1\%\\ \hline
 \caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on the problems of deceptive variants.}
 \end{figure}
 
+\subsubsection{ Comparison on deceptive variants }
+
+
+We first consider the deceptive problems in Figure 2.
+For concatenated trap problems, DSMGA-II requires less NFE than LT-GOMEA and hBOA.
+For folded trap problems, the two-edge model helps aligned the receiver with the promenant pattern in population.
+Together with back mixing, the pattern soon dominates the population, and the population is able to jump out of the plateau. 
+This strong and precise drifting effects is the key to the outstanding performance of DSMGA-II on folded trap problems.
+
+
+For cyclic trap, most of patterns converges to three, four or five consecutive 1s or 0s after local search.
+Afterwards, it is crutial to construct a model that contains all zeros in order to be flipped to all ones. 
+The original AMWCS can only detect the subproblem structures, but the two-edge AMWCS can further construct a most suitable structure for a specific receiver. 
+For instance, consider a chromosome 111100000 with its AMWCS starting from 5-th bit with allele 0.
+Both the one-edge and two-edge AMWCS detects a strong linkage between the four bits on the left and the four bits on the right.
+For the one-edge model, there is a fifty-fifty chance to choose a bit from the first four bits or the last four bits to add into the AMWCS. 
+However, if one of the first four bits is chosen as the second node of AMWCS, all mixing attempts shall fail since flipping 11110 to 00001 results in worse fitness.
+To make matters even worse, cross-competition might occur if 111100000 is flipped to 000011111. 
+This pattern might dominate the population in back mixing by converging all first four bits to zeros.
+With the two-edge model, the linkages $L(01\cup10)$ between the 5-th bit and first four bits are going to be negative. 
+The all 1s and all 0s patterns helps enhance the $L(00\cup11)$ linkage in the two-edge AMWCS graph.
+As a result, the second node must be selected from the last four bits, which has the same allele 0 as the 5-th bit.
+Once the model 00000 is selected during mixing, the 111100000 can be flipped to global optimum.
+
+
+\subsubsection{ Comparison on NK-landscape problems }
+
 \begin{figure}
 \centering
 \includegraphics[width=3.3in]{nkResults}
@@ -633,17 +684,31 @@ MAX-SAT,\textit{ l = 200} 			& 1,000& 1000&1\%\\ \hline
 \end{figure}
 
 
+The NK series in Figure 2.
+The result shows the ability of the ILS model in handling randomly generated overlapping problems. 
+The difference between DSMGA-II and other algorithms enlarges as the degree of overlapping decreases. 
+When coping with severly overlapped structures, DSMGA-II requires more NFE during graph refining process.
+Once the linkage information stands out, the back mixing operator allows the correct pattern to dominate the population instantly 
+
+
+\subsubsection{ Comparison on real-world problems }
+
+
 \begin{figure}
 \centering
 \includegraphics[width=3.3in]{spin_satResults}
-\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $l=100$ on MAX-SAT).}
+\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $\ell=100$ on MAX-SAT).}
 \end{figure}
 
 
 
 
 \section{Conclusions}
-Our new techniques constructs a more precise linkage model that gives building-blocks customized for each receiving chromosome during mixing. We also show that early-stopping technique can reduce the probability of cross-competition, allowing DSMGA-II to solve the benchmark problems with a smaller population and less NFE. The improved DSMGA-II decrease NFE by up to 20\% compared with the original version. It also outperforms LT-GOMEA and hBOA on multiple benchmark problems. 
+This paper proposes a new two-edge graphical linkage model for DSMGA-II. 
+Some new techniques are also adopted to constructs a more precise linkage model that gives building-blocks customized for each receiving chromosome during mixing.
+We also show that early-stopping technique can reduce the probability of cross-competition, allowing DSMGA-II to solve the benchmark problems with a smaller population and less NFE.
+The improved DSMGA-II decrease NFE by up to 20\% compared with the original version. It also outperforms LT-GOMEA and hBOA on multiple benchmark problems. 
+
 %\end{document}  % This is where a 'short' article might terminate
 
 %ACKNOWLEDGMENTS are optional
