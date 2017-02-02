@@ -330,7 +330,7 @@ $improved  \leftarrow false$ \\
 This section introduces the concept and the flow of AMWCS construction. In the original AMWCS, nodes are connected with only one linkage. We call this technique the one-edge AMWCS. In this section, we first describe the new linkage graph, called the two-edge AMWCS, which gives customized building-block models for each chromosome. Then, we discuss \textit{supply bound}, the theoretical support behind this measure. Finally, we provide some techniques that enhance the model selection efficiency and reduce the probability of cross-competition. 
 
 \subsection{2-edge AMWCS}
-In the scheme of 2-edge AMWCS, the dependency measurement between two bits is different from the 1-edge graph. The linkage measure equation is divided into two parts as following : 
+In the scheme of two-edge AMWCS, the dependency measure between two bits is different from the original one-edge graph. The linkage measure equation is divided into two parts:
 
 \begin{equation} 
 \begin{split}
@@ -339,32 +339,40 @@ L( 01 \cup 01 ) &= P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{1
 \end{split}
 \end{equation}
 
-The reason for dividing the mutual information into two groups is to protect the building-block pattern. For example, if we divide the linkage measure into two parts, $I(01 \cup 00)$ and $I (10 \cup 11)$. For building-blocks with linkage $I(01\cup00)$, the pattern 01 might be flipped to 10 and the pattern 00 might be flipped to 11 during mixing. The resulting patterns contradict with the linkage assumption and destroy the schema between these two bits. Therefore, the linkage measure is divided  into $I(0\cup11)$ and $I(01\cup10)$, for these patterns are the complements of each other and cannot be interrupted during mixing.
+The reason for such division is to protect the pattern within each building-blocks. For building-blocks with linkage  $L(00\cup11)$, the pattern 00 might be flipped to 11 and the pattern 11 might be flipped to 00 during restricted mixing. The resulting patterns, 00 and 11, are the complements of each other, and the original patterns are reserved during mixing. Same scenario happens with pattern 01 and 10.
 
 
-In the 2-edge AMWCS scheme, the equation for finding a node that maximize the weight of AMWCS is the same as the equation in the  1-edge scheme. However, unlike the 1-edge AMWCS that view all patterns of a building-block equally, the allele of receivers are taken into account in the 2-edge linkage model. The rule of edge selection in the 2-edge AMWCS is as follows :
+In the two-edge AMWCS scheme, the equation for finding a node that maximize the weight of AMWCS is defined as:
 
-\begin{displaymath}
+\begin{equation} \textit{index} = argmax\sum I(v_i;v_j), {v_i\in V}, {v_j \in V_s}\end{equation}
+
+where $V$ is the candidate vertices set, and $V_s$ is the AMWCS vertices set.
+
+ It is the same as the equation in the  one-edge scheme. However, unlike the one-edge AMWCS that view all patterns of a building-block equally, the alleles of receivers are taken into account in the two-edge linkage model. The rule of edge selection in the two-edge AMWCS is as follows:
+
+\begin{equation}
 L(X;Y) = 
    \begin{cases}
-    L(00\cup11) \text{, if reciever's allel pattern is 00 or 11} \\
-    L(01\cup10) \text{, if reciever's allel pattern is 01 or 10} 
+    L(00\cup11) \text{, if pattern is 00 or 11} \\
+    L(01\cup10) \text{, if pattern is 01 or 10} 
 	\end{cases}
-\end{displaymath}
+\end{equation}
 
 
 
 \begin{figure}
 \centering
 \includegraphics[width=3.3in]{AMWCS}
-\caption{(a) to (c) and (d) to (g) show the construction of  one-edge AMWCS and two-edge AMWCS, respectively. The value in each node represents the allele. The width of each edge corresponds to the strength of dependency measure between pairs. For (d) to (g), the gray and black edges represent the $L(00\cup11)$ edge, while the pink and red edges represent the $L(00\cup11)$ edge. Nodes and edges with color black or red represent the determined AMWCS.}
+\caption{(a) to (c) and (d) to (g) show the construction of  one-edge AMWCS and two-edge AMWCS, respectively. The value in each node represents the allele. The width of each edge corresponds to the strength of dependency measure between pairs. For (d) to (g), the gray and black edges represent the L(00$\cup$11) edge, while the pink and red edges represent the L(00$\cup$11) edge. Nodes and edges with color black or red represent the determined AMWCS.}
 \end{figure}
 
 
-For instance, consider a problem with length 4, allele $\{1, 0, 1, 1\}$ and the index 2 was randomly chosen from $ \{1, 2, 3, 4\}$ at first illustrated in Figure 2. Although there is a strong edge(solid line) between node 2 and 3, the edge is disconnected due to the rule constraint, so node 1 is picked in this iteration because of the thickest dotted line. After 2 iterations, the inserted sequence of nodes into AMWCS is $Q = ⟨2, 1, 4, 3⟩$, and the incremental linkage sets is $L = \langle\{2\}; \{2, 1\};\{2, 1, 4\}; \{ 2, 1,  4,  3\}\rangle$.
+Figure 2 depicts different results of model construction with  a problem of three bits, and a receiver with alleles \{0, 1, 0\}. First, the node 1 with allele 0 was randomly chosen from the candidate set \{1, 2, 3\}. For the one-edge scheme in Figure 2(b), node 3 is selected with the strongest edge \{1, 2\}. After two iterations, the inserted node sequence of the one-edge AMWCS is $Q = \langle\{1, 2, 3\}\rangle$, and the incremental linkage set is ILS $=\langle\{1\}; \{1, 2\}; \{1, 2, 3\}\rangle$. For the two-edge scheme in Figure 2(d), although there is a strong gray edge between node 1 and 3,  the pattern 10 conflicts with the meaning of gray edges.  According to the linkage selection rule, the thin red edge $L(01\cup10)$ represents the linkage between node 1 and 3 with pattern 01. For clarity, we illustrate conflict edges with dotted lines. Same scenario happens to other edges in Figure 2(e). Unlike the one-edge scheme, node 3, with the strongest solid edge \{1, 3\}, is picked in Figure 2(f). Therefore, the inserted node sequence of the two-edge AMWCS is $Q = \langle\{1, 3, 2\}\rangle$,  and the incremental linkage set is ILS = $\langle\{1\}; \{1, 3\}; \{1, 3, 2\}\rangle$.
+
+Consider an instance with  optimal subsolution 111 with  strong  linkage among these three bits. Following the procedures described above, the one-edge AMWCS construct the ILS as $\langle\{1\}; \{1, 2\}; \{1, 2, 3\}\rangle$. However, None of mask in the ILS can flip the receiver with pattern 001 to 111. In short, even if one-edge AMWCS detects the correct model, it might still fail during mixing since the pattern might not be the optimal subsolution.
 
 
-The advantage of 2-edge AMWCS is exactly that the scheme considers the receiver{\rq}s allele in the mixing stage. For instance, consider an optimal subsolution 111, and 1-edge AMWCS detect the  strong  linkage  among  these  three bits, then build the ILS as  $\langle \{1\}, \{1, 2\}, \{1, 2, 3\}... \rangle$. Although the mask $\{1, 2, 3\}$ can flip the pattern 000 to 111, however, if the receiver{\rq}s allele pattern is 010, no mask above can flip it to 111. So even 1-edge AMWCS already detected the correct model, it does not  flip efficiently if the scheme not to take the receiver{\rq}s allele into consideration. 2-edge AMWCS can handle this problem with one of its property: The receiver{\rq}s allele is inclined to become the same specific pattern which account for the higher rate of the population, and we believe that the high ratio pattern implies the optimal subpattern in average. The reason for that is one of the characteristic of the mutual information :  If we divided the mutual information into two parts, then the part with the high-ratio pattern will be positive, and the other part usually be negative. Under this circumstance, for the example above, if the pattern 111 gets higher ratio in the population, the $I(00\cup11)$ among these nodes are positive, and the $I(01\cup10)$ among them are negative. So if the receiver{\rq}s pattern is 010, and AMWCS start with node 1. Because the edge between node 1 and node 2 is negative, the AMWCS will not add the node 2 into the candidate set in this iteration, then the ILS might be $\langle\{1\}, \{1, 3\}, ...\}\rangle$ rather than $\langle\{1\}, \{1, 2\}, \{1, 2, 3\}, ...\rangle$. And the mask $\{1, 3\}$ can flip the pattern 010 to the pattern 111 which we want.    
+On the other hand, two-edge AMWCS can handle this problem by taking the alleles of receivers into account and preserve the correct pattern during mixing. We believe that the ratio of a pattern in the population corresponds to the possibility of such pattern being the optimal subsolution. The two-edge model tends to align the alleles of receiver  with the dominant patterns in the population. The reason for such tendency lies in the characteristic of mutual information. Since the mutual information between two bits is divided into two parts in the two-edge AMWCS,  the  linkage containing the high-ratio pattern  is often positive, while the other part is usually negative.  In the example above, if the optimal subsolution 111 is prominent in the population, then the linkages $L(00\cup11)$ among these nodes should be positive, and the linkages $L(01\cup10)$ are likely negative.  In Figure 2(d), the two-edge AMWCS starts with node 1, and the receiver has pattern  001. Unlike the one-edge model, the ILS  $\langle\{1\}; \{1, 3\}; \{1, 3, 2\}\rangle$ is only constructed with solid edges. For the two-edge scheme, choosing the mask \{1, 3\} can help flipping the pattern 001 to the the optimal subsolution 111.    
 
 
 \begin{table}[ht]
@@ -381,18 +389,22 @@ NFE variance					& 1,000& 1000\\ \hline
 
 
 \subsection{Supply bound}
-Although 2-edge AMWCS performs more efficiently in linkage building, there is still a problem in restricted mixing. In 
-the restricted mixing stage, receiver keeps trying the masks until the fitness gets better or there is no supply. The problem is that  the bit-pattern grouped together are complement to the other, so if the AMWCS add the node into the candidate set, it means the pattern and the complement pattern account for high ratio of the population, and it leads higher probability to pass the supply check. But in the early stage, because the information for model building is not clear and not accurate yet, the restricted mixing usually fails. Due to the much longer length of supply, 2-edge AMWCS wastes much more NFEs for the restricted mixing fail in the early stage. The experiment(Table 2) shows that  1-edge AMWCS performs accurately in finding the  length of model, and 2-edge AMWCS gives rise to about double size supply.
-
-To handle the problem of 2-edge AMWCS supply overfitting, we decide to adopt 1-edge AMWCS for the supply check. The concept is that 2-edge AMWCS  performs more accurately in linkage building, and 1-edge AMWCS is good at model size finding. Then why not we take advantage of these techniques? The pseudocode of  the restricted mixing in the 2-edge AMWCS is given in algorithm 4.
+Although two-edge AMWCS takes the receiver  into account and performs more effect in bit flipping, we find that two-edge AMWCS leads to much more NFE wasted in the mixing stage. In back mixing, the failing rate gets higher due to the problem of supply overfitting. The reason is that the bit-pattern grouped together are complement to the other, so if the AMWCS add a node into the candidate set, it means this pattern and the complement pattern between them account for higher ratio of the population, and it leads higher probability to pass the supply check. For example, consider a receiver with allele {0, 1, 0}, and we start with allele 0. If the procedure picks node 2 instead of node 3 in this iteration, this implies that the ratio of 01 and 10 pattern between node 1 and 2 is higher than the 00 and 11 pattern between node 1 and 3, and it leads easier to pass the supply check since the complement pattern has a high ratio in the population. Experiment (Table 2) shows that  the length of two-edge AMWCS’s supply is about two times longer than one-edge AMWCS’s supply. If the procedure uses the overfitting supply for the back mixing, it is just like to copy the whole chromosome instead of collecting the suboptima patterns. So it makes back mixing performs less efficiently   and brings about more  wasted NFE in back mixing.
 
 
+To avoid supply overfitting, we adopt one-edge AMWCS for the supply bound. The concept is that one-edge uses the complete mutual information instead of divided one. It means that unlike two-edge AMWCS, one-edge AMWCS follows the global information between bits  and does not overfit supply. We also find that the one-edge supply bound benefits the restricted mixing. The reason we speculated is that in the early stage, the information for model building is not clear and not accurate yet, so the restricted mixing usually fails. Due to the much longer length of supply and the restricted mixing operator is terminated only if the receiver’s fitness gets better or the supply check does not pass, two-edge AMWCS  wastes much more NFE in restricted mixing. With the smaller supply length one-edge AMWCS produced, it unexpected benefits the restricted mixing as well.   
 
 
 \subsection{Chromosome Existence Check}
-Break prevents possible cross over and limit attempts for useless function call. 
-Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
-If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
+%Break prevents possible cross over and limit attempts for useless function call. 
+%Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
+%If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
+
+In restricted mixing, the procedure is not terminated when the receiver is flipped to the pattern which has already existed in the population even though the flipped pattern leads to improvement. The procedure calls the continue operator instead. Nevertheless, we find that this criterion leads to extra cross-competition. For example, consider a problem which contains two subproblem with the same suboptimum pattern 111 and pattern 000000 exists in the population. In restricted mixing, if the receiver’s pattern is 111000, even though the procedure flipped it to 000000 which has already exists, restricted mixing calls the continue operator and keeps trying bit-flipping. Thus, the chromosome can be flipped to 000111 and starts the backmixing. Under this circumstance, the chromosomes in the population with the pattern 111 in the first subproblem are possibly being replaced with pattern 000. This phenomenon increases the probability of ruining optimum and NFEs. 
+
+
+To prevent this situation, we substitute the continue operator to break for chromosome existence check. This method would terminate restricted mixing and change another chromosome into receiver. The pseudo code of modified restricted mixing is given in Algorithm 4. 
+
 
 
 \begin{algorithm}
