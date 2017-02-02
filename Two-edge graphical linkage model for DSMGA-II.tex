@@ -75,7 +75,7 @@ Author\\
 
 \maketitle
 \begin{abstract}
-DSMGA-II is a novel genetic algorithm, capable of solving optimization problems via exploiting subproblem structures. In terms of number of function evaluations (NFE), it outperforms LT-GOMEA and hBOA on multiple trap problems, NK-landscape problems with multiple degrees of overlapping, 2D Ising spin-glass problems, and MAX-SAT problems. In this paper, we aim to improve the accuracy of model building and the efficiency of model selection by proposing some new techniques for DSMGA-II operators. Experiment results show that our new techniques can reduce up to 20\% of NFE compared with the original DSMGA-II.
+DSMGA-II, a model-based genetic algorithm, is capable of solving optimization problems via exploiting sub-structures of the problem. In terms of number of function evaluations (NFE), DSMGA-II has shown superior optimization ability to LT-GOMEA and hBOA on various benchmark problems as well as real-world problems. This paper proposes a two-edge graphical linkage model, which customizes recombination masks for each receiver according to its alleles, to further improve the performance of DSMGA-II.  The new linkage model is more expressive than the original dependency structure matrix (DSM), providing far more possible linkage combinations than the number of solutions in the search space. To reduce unnecessary function evaluations, the two-edge model is used along with the supply bounds from the original DSM. Some new techniques are also proposed to enhance the model selection efficiency and to reduce the probability of cross-competition. Combining these proposed techniques, the empirical results show up to 20\% of NFE reduction compared with the original DSMGA-II.
 \end{abstract}
 
 
@@ -120,26 +120,18 @@ DSMGA-II is a novel genetic algorithm, capable of solving optimization problems 
 
 \section{Introduction}
 
-Dependency structure matrix genetic algorithm-II (DSMGA-II) is a novel model building GA proposed by Hsu and Yu in 2015 \cite{hsu:DSMGA2}.
-Based on the dependency structure matrix (DSM), a new linkage model, called the incremental linkage set (ILS), is adopted in DSMGA-II to provide potential models for mixing. Restricted mixing and back mixing are the two major operators of DSMGA-II. They are the keys to significantly reduce the number of function evaluations (NFE) compared with other optimal mixing operators. Experiment results show that DSMGA-II requires less NFE than some cutting-edge evolutionary algorithms, such as LT-GOMEA \cite{bosman:LT-GOMEA} and hBOA \cite{pelikan:hBOA}, on various benchmark problems. 
+Dependency structure matrix genetic algorithm-II (DSMGA-II) is a novel model building GA proposed by Hsu and Yu in 2015~\cite{hsu:DSMGA2}.
+Based on the dependency structure matrix (DSM), a new linkage model, called the incremental linkage set (ILS), is adopted in DSMGA-II to provide potential models for mixing. Restricted mixing and back mixing are the two major operators of DSMGA-II. They are the keys to significantly reduce the number of function evaluations (NFE) compared with other optimal mixing operators. Experiment results show that DSMGA-II requires less NFE than some cutting-edge evolutionary algorithms, such as LT-GOMEA~\cite{bosman:LT-GOMEA} and hBOA~\cite{pelikan:hBOA}, on various benchmark problems. 
 
 However, there is still room for improvement with model building in DSMGA-II. In this paper, we consider building a two-edged approximation maximum-weight connected subgraph (AMWCS) as a more effective linkage model. We also demonstrate how early-stopping methods enable more efficient model selection during mixing, resulting in less NFE.
 
 
-This paper is organized in six parts. Section 2 introduces the original DSMGA-II schema and the testing problems. Section 3 describes the mechanism of early stopping technique. Section 4 introduces the 2-edged linkage model in detail. Section 5 shows the experiment results and section 6 gives the summary and conclusion.
+This paper is organized in six parts. Section 2 introduces the original DSMGA-II schema. Section 3 introduces the 2-edged linkage model in detail, along with some new techniques to enhance mixing effectiveness. Section 4 shows the experiment results and section 5 gives the summary and conclusion.
 
 
 
 \section{DSMGA-II}
-In this Section, we first introduce the framework of DSMGA-II and the concept of incremental linkage set. After that, we give details of restricted mixing and back mixing, which are the kernel operators of DSMGA-II.
-
-
-\subsection{Framework of DSMGA-II}
-DSMGA-II consists of four major steps: population initialization, linkage model building, restricted mixing and back mixing. 
-
-First, DSMGA-II randomly initializes a population. Then, in order to enhance the quality of pairwise linkage model and reduce the noise in the population, DSMGA-II performs a bit-flipping greedy hill climbing (GHC) on each chromosome. For each randomly initialized chromosome, GHC randomly flips each bit in the chromosome and evaluates its fitness. If the fitness improves, the chromosome accepts the change. Otherwise, the flipped bit is restored. Pairwise linkage detection was adopted in a later version of LTGA \cite{pelikan:pairwise} and DSMGA \cite{yu:DSMGA} due to its resistance to sampling noise. Performing GHC before linkage model building can further ensure the pairwise linkage information between genes, by ruling out trivial cases that can be solved without linkage information. 
-
-
+In this section, we first introduce the framework of DSMGA-II and the concept of incremental linkage set. After that, we give details of restricted mixing and back mixing, which are the kernel operators of DSMGA-II.
 
 \begin{algorithm}
 \caption{DSMGA-II}\label{algo_disjdecomp}
@@ -183,15 +175,22 @@ $P \leftarrow$ \GHC{$P$} \\
 \Return best instance in $P$
 \end{algorithm}
 
-After initializing the population, only the selected chromosomes are used to build the linkage model. The chromosomes are chosen by a tournament selection with　selection pressure as 2, suggested in \cite{yu:population}. DSMGA-II adopts mutual information as pairwise linkage measure and stores the linkage information in a DSM. The DSM is updated only once in each generation in order to prevent overfitting from frequent model building. Notice that tournament selection is only performed to choose chromosomes for model building instead of updating the population. The following steps of restricted mixing and back mixing proceed with the original population.
+
+\subsection{Framework of DSMGA-II}
+DSMGA-II consists of four major steps: population initialization, linkage model building, restricted mixing and back mixing. 
+
+First, DSMGA-II randomly initializes a population. Then, in order to enhance the quality of pairwise linkage model and reduce the noise in the population, DSMGA-II performs a bit-flipping greedy hill climbing (GHC) on each chromosome. For each randomly initialized chromosome, GHC randomly flips each bit in the chromosome and evaluates its fitness. If the fitness improves, the chromosome accepts the change. Otherwise, the flipped bit is restored. Pairwise linkage detection was adopted in a later version of LTGA~\cite{pelikan:pairwise} and DSMGA~\cite{yu:DSMGA} due to its resistance to sampling noise. Performing GHC before linkage model building can further ensure the pairwise linkage information between genes, by ruling out trivial cases that can be solved without linkage information. 
 
 
-Before mixing, DSMGA-II builds the ILS with the linkage information stored in DSM. The ILS is a set of models indicating possible subproblem structures for restricted mixing. In restricted mixing, the receiver tries to flip the bits within the model. If the fitness does not decrease, the receiver becomes the donor in back mixing and the new pattern is tried on all chromosomes in the population. The population is randomly shuffled before restricted mixing so that each chromosome takes turns acting as the receiver in restricted mixing and the donor in back mixing. The pseudo code of DSMGA-II is given in Algorithm 1. The detailed implementations of the ILS and the mixing operators are described in section 2.2 and 2.3. 
+After initializing the population, only the selected chromosomes are used to build the linkage model. The chromosomes are chosen by a tournament selection with selection pressure as 2, suggested in~\cite{yu:population}. DSMGA-II adopts mutual information as pairwise linkage measure and stores the linkage information in a DSM. The DSM is updated only once in each generation in order to prevent overfitting from frequent model building. Notice that tournament selection is only performed to choose chromosomes for model building instead of updating the population. The following steps of restricted mixing and back mixing proceed with the original population.
+
+
+Before mixing, DSMGA-II builds the ILS with the linkage information stored in DSM. The ILS is a set of models indicating possible subproblem structures for restricted mixing. In restricted mixing, the receiver tries to flip the bits within the model. If the fitness does not decrease, the receiver becomes the donor in back mixing and the new pattern is tried on all chromosomes in the population. The population is randomly shuffled before restricted mixing so that each chromosome takes turns acting as the receiver in restricted mixing and the donor in back mixing. The pseudo code of DSMGA-II is given in Algorithm 1. The detailed implementations of the ILS and the mixing operators are described in the following sections. 
 
 
 
 \subsection{Incremental Linkage Set}
-The DSM is an adjacent matrix representing the dependency between two variables, where each entry stores the pairwise information between two bits. In DSMGA-II, pairwise dependencies are measured by mutual information \cite{kullback:KL-diversion}. Formally, the mutual information of two random variable X and Y can be defined as:
+The DSM is an adjacent matrix representing the dependency between two variables, where each entry stores the pairwise information between two bits. In DSMGA-II, pairwise dependencies are measured by mutual information~\cite{kullback:KL-diversion}. Formally, the mutual information of two random variable X and Y can be defined as:
 
 \begin{displaymath} 
 I(X;Y) = \sum_{x \in X}\sum_{y \in Y} p(x,y)  log \frac{p(x,y)}{p(x) p(y)} 
@@ -207,19 +206,33 @@ I(X;Y) &= P_{00 }log\frac{P_{00}}{P_{0*} P_{*0}} + P_{11 }log\frac{P_{11}}{P_{1*
 \end{equation}
 
 
-\begin{figure}
-\centering
-\includegraphics[height=2.2in, width=2.5in]{AMWCS1edge}
-\caption{(a) to (d) shows the AMWCS in each iteration. The nodes represent variables and the gray edges represent the dependency measure between pairs. The larger the measure is, the wider the edge is. Black  edges represent the determined AMWCS.}
-\end{figure}
+If X and Y are independent, then I(X; Y) equals to 0.
+Otherwise, the mutual information indicates how much the corresponding bits differ from most of the chromosomes in current population.
+The value of mutual information between two bits corresponds to the probability of two bits being in the same building-block.
+Therefore, DSMGA-II constructs building-blocks by clustering the DSM.
+Instead of using traditional hierarchical clustering algorithms proposed in~\cite{thierens:LTGA} or the average linkage clustering technique proposed in~\cite{thierens:OM}, DSMGA-II adopts a specific subgraph called approximation maximum-weight connected subgraph (AMWCS).
+DSMGA-II constructs AMWCS from a certain bit,  and iteratively adds one single bit into the graph.
+%For example, consider a  graph $G = (V, E), V = \{v1 ,v2, v3, v4\}$, the AMWCS $G_{s} =(V_{s}, E_{s}), V_{s} =\{v1 , v2\}$, and the candidate nodes $N =\{v3 ,v4\}$. The goal is to find a node from the candidate set with a greedy approach that maximizes the weight of AMWCS after insertion. The equation can be defined as : 
+
+%\begin{equation} \textit{index} = argmax_{i\in 3,4}\sum_{j=1}^{2} I(v_i;v_j) \end{equation}
+
+%The ILS  is an AMWCS constructed with a randomly chosen start node. For example, consider a problem with problem size  4, and its linkage model, i.e. the DSM, shown in Figure 1. The first step of constructing ILS is to choose a start node. Here, the index 1 was randomly chosen from $\{1, 2, 3, 4\}$. Then, the rest of nodes are inserted into AMWCS following the sequence $\{1,2,4,3\}$ that gives the maximum weight. After 3 iterations, the ILS is constructed as an ordered set $L = \langle\{1\}, \{1, 2\}, \{1, 2, 4\}, \{1, 2, 4, 3\} \rangle$. Each component of the ILS is called a mask, which is a potential  building-block in the mixing stage. 
 
 
-If X and Y are independent, then I(X; Y) equals to 0. Otherwise, the mutual information indicates how much the corresponding bits differ from most of the chromosomes in current population. The value of mutual information between two bits corresponds to the probability of two bits being in the same building-block. Therefore, DSMGA-II constructs building-blocks by clustering the DSM. Instead of using traditional hierarchical clustering algorithms proposed in \cite{thierens:LTGA} or the average linkage clustering technique proposed in \cite{thierens:OM}, DSMGA-II adopts a specific subgraph called approximation maximum-weight connected subgraph (AMWCS). DSMGA-II constructs AMWCS from a certain bit,  and iteratively adds one single bit into the graph. For example, consider a  graph $G = (V, E), V = \{v1 ,v2, v3, v4\}$, the AMWCS $G_{s} =(V_{s}, E_{s}), V_{s} =\{v1 , v2\}$, and the candidate nodes $N =\{v3 ,v4\}$. The goal is to find a node from the candidate set with a greedy approach that maximizes the weight of AMWCS after insertion. The equation can be defined as : 
 
-\begin{equation} \textit{index} = argmax_{i\in 3,4}\sum_{j=1}^{2} I(v_i;v_j) \end{equation}
 
-The ILS  is an AMWCS constructed with a randomly chosen start node. For example, consider a problem with problem size  4, and its linkage model, i.e. the DSM, shown in Figure 1. The first step of constructing ILS is to choose a start node. Here, the index 1 was randomly chosen from $\{1, 2, 3, 4\}$. Then, the rest of nodes are inserted into AMWCS following the sequence $\{1,2,4,3\}$ that gives the maximum weight. After 3 iterations, the ILS is constructed as an ordered set $L = \langle\{1\}, \{1, 2\}, \{1, 2, 4\}, \{1, 2, 4, 3\} \rangle$. Each component of the ILS is called a mask, which is a potential  building-block in the mixing stage. 
+\subsection{Restricted Mixing and Back Mixing}
 
+\subsubsection{Optimal Mixing}
+Unlike canonical genetic algorithms that generate offsprings by recombining parent solutions, DSMGA-II extends the the idea of optimal mixing (OM)~\cite{thierens:OM} with two new mixing operators: restricted mixing and back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size~\cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
+
+
+\subsubsection{Restricted Mixing}
+
+In in each iteration of restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. Each mask is a set of indexes that indicates which bits should be flipped together during mixing operations. All masks in the ILS must go through a supply check to make sure that the complement pattern of the receiver exists in the population. This way, flipping the bits is equivalent to recombining the receiver with the complement pattern. After supply check, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. If the fitness does not decrease after recombination, the pattern is accepted and restricted mixing terminates. The receiver then becomes the donor of the new pattern for rest the population in back mixing. 
+
+
+The idea behind restricted mixing is building-block supply~\cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. The pseudo-code for  restricted mixing is provided in Algorithm 2.
 
 \begin{algorithm}
 \caption{Restricted Mixing}\label{algo_disjdecomp}
@@ -238,15 +251,16 @@ ${R_M}'$: complement pattern of ${R_M}$
 \BlankLine
 %\tcp{ construct ILS }
 $V \leftarrow \{ 1, 2, ..., l \}$ \\
-$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
-%$AMWCS \leftarrow$ a random vertex $v \in V$ \\
+%$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
+$V_s \leftarrow$ a random vertex $v \in V$ \\
 remove $v$ from $V$ \\
 
 \While{$ |V| \geq l/2$} {
 
     $ILS \leftarrow ILS \cup V_{S}$ \\
-    $V_S \leftarrow V_S \cup \{v$ | the nearest vertex $v \in V \}$ \\
+    $V_S \leftarrow V_S$ $\cup$ \{ the nearest vertex $v \in V \}$ \\
     %add the nearest vertex $v \in V$ into $AMWCS$ \\
+    
     remove $v$ from $V$ \\
 }
 
@@ -269,16 +283,8 @@ remove $v$ from $V$ \\
 \Return ($R$, $\emptyset$) 
 \end{algorithm}
 
-
-\subsection{Restricted Mixing and Back Mixing}
-
-\subsubsection{Optimal Mixing}
-Unlike canonical genetic algorithms that generate offsprings by recombining parent solutions, DSMGA-II extends the the idea of optimal mixing (OM) \cite{thierens:OM} with two new mixing operators: restricted mixing and back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size \cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
-
-
-\subsubsection{Restricted Mixing}
-
-In in each iteration of restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. Each mask is a set of indexes that indicates which bits should be flipped together during mixing operations. All masks in the ILS must go through a supply check to make sure that the complement pattern of the receiver exists in the population. This way, flipping the bits is equivalent to recombining the receiver with the complement pattern. If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded. After supply check, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. If the fitness decrease after recombination, the receiver continues to try bit-flipping with the next (smallest) building-block. Otherwise, the pattern is accepted and restricted mixing terminates. The receiver then becomes the donor of the new pattern for rest the population in back mixing. 
+\subsubsection{Back Mixing}
+In back mixing, every chromosome in the population is mixed with the pattern accepted in restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no chromosome fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criteria is set differently from restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement~\cite{bosman:LT-GOMEA} have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criteria often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criteria. When no improvement occurs, it switch to equal-acceptance criteria to reduce unnecessary evaluations on plateaus. The empirical experiment results suggest that back mixing is able to deal with both plateaus and diversity issues. The pseudo-code for  restricted mixing is provided in Algorithm 3.
 
 \begin{algorithm}
 \caption{Back Mixing}\label{algo_disjdecomp}
@@ -296,9 +302,7 @@ $improved  \leftarrow false$ \\
 \For{$j \leftarrow 1$ \KwTo $|P|$} {
 
     $T \leftarrow P_j$ \\
-    \For{$m \in M$} {
-        $T_m \leftarrow D_m$ \\
-    }
+    $T_M \leftarrow D_M$ \\
 
     \eIf {$f(T) \geq f(P_j)$} {
 
@@ -318,49 +322,20 @@ $improved  \leftarrow false$ \\
 
 \end{algorithm} 
 
-The idea behind restricted mixing is building-block supply \cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. The pseudo-code for  restricted mixing is provided in Algorithm 2.
-
-
-
-
-
-\subsubsection{Back Mixing}
-In back mixing, every chromosome in the population is mixed with the pattern accepted in restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no chromosome fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criteria is set differently from restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement (FI) \cite{bosman:LT-GOMEA} have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criteria often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criteria. When no improvement occurs, it switch to equal-acceptance criteria to reduce unnecessary evaluations on plateaus. The empirical experiment results suggest that back mixing is able to deal with both plateaus and diversity issues. The pseudo-code for  restricted mixing is provided in Algorithm 3.
-
-
-
-
-\section{MODEL SELECTION}
-
-\subsection{Early Stopping}
-Break prevents possible cross over and limit attempts for useless function call. 
-Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{ |c|c|c| } \hline
-Parameters & Continue & Break \\ \hline
-Success rate 					& 1,000& 1000\\ \hline
-Cross competition occurrence	& 1,000& 1000\\ \hline
-NFE mean				 		& 1,000& 1000\\ \hline
-NFE variance					& 1,000& 1000\\ \hline
-\end{tabular}
-\caption{Success rate comparison}
-\end{table}
 
 
 
 
 \section{THE NEW LINKAGE MODEL}
-This section introduces the concept and the flow of AMWCS construction. In the original AMWCS, nodes are connected with only one linkage. We call this technique the 1-edge AMWCS. In this section, we first provide a new linkage graph called the 2-edge AMWCS which gives more precise building-block models for different chromosomes.. Then we describe supply bound,  the theoretical support behind this measure. 
+This section introduces the concept and the flow of AMWCS construction. In the original AMWCS, nodes are connected with only one linkage. We call this technique the one-edge AMWCS. In this section, we first describe the new linkage graph, called the two-edge AMWCS, which gives customized building-block models for each chromosome. Then, we discuss \textit{supply bound}, the theoretical support behind this measure. Finally, we provide some techniques that enhance the model selection efficiency and reduce the probability of cross-competition. 
 
 \subsection{2-edge AMWCS}
 In the scheme of 2-edge AMWCS, the dependency measurement between two bits is different from the 1-edge graph. The linkage measure equation is divided into two parts as following : 
 
 \begin{equation} 
 \begin{split}
-I( 00 \cup 11 ) &= P_{00 }log\frac{P_{00}}{P_{0*} P_{*0}} + P_{11 }log\frac{P_{11}}{P_{1*} P_{*1}}  \\
-I( 01 \cup 01 ) &= P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{10}}{P_{1*} P_{*0}}  
+L( 00 \cup 11 ) &= P_{00 }log\frac{P_{00}}{P_{0*} P_{*0}} + P_{11 }log\frac{P_{11}}{P_{1*} P_{*1}}  \\
+L( 01 \cup 01 ) &= P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{10}}{P_{1*} P_{*0}}  
 \end{split}
 \end{equation}
 
@@ -369,17 +344,20 @@ The reason for dividing the mutual information into two groups is to protect the
 
 In the 2-edge AMWCS scheme, the equation for finding a node that maximize the weight of AMWCS is the same as the equation in the  1-edge scheme. However, unlike the 1-edge AMWCS that view all patterns of a building-block equally, the allele of receivers are taken into account in the 2-edge linkage model. The rule of edge selection in the 2-edge AMWCS is as follows :
 
-\begin{displaymath} 
-\begin{split}
-I(X;Y) &= I(00\cup11) \text{, if reciever's allel pattern is 00 or 11} \\
-I(X;Y) &= I(01\cup10) \text{, if reciever's allel pattern is 01 or 10} 
-\end{split}
+\begin{displaymath}
+L(X;Y) = 
+   \begin{cases}
+    L(00\cup11) \text{, if reciever's allel pattern is 00 or 11} \\
+    L(01\cup10) \text{, if reciever's allel pattern is 01 or 10} 
+	\end{cases}
 \end{displaymath}
+
+
 
 \begin{figure}
 \centering
-\includegraphics[height=2.2in, width=2.5in]{AMWCS2edge}
-\caption{(a) to (d) shows the AMWCS in each iteration. The nodes represent variables, the values in the variables represent the alleles of the nodes, the solid lines represent the 00-11 edge, the dotted lines represent the 01-10 edge, and the gray edges represent the dependency measure between pairs. The larger the measure is, the wider the edge is. Black nodes and edges represent the determined AMWCS.}
+\includegraphics[width=3.3in]{AMWCS}
+\caption{(a) to (c) and (d) to (g) show the construction of  one-edge AMWCS and two-edge AMWCS, respectively. The value in each node represents the allele. The width of each edge corresponds to the strength of dependency measure between pairs. For (d) to (g), the gray and black edges represent the $L(00\cup11)$ edge, while the pink and red edges represent the $L(00\cup11)$ edge. Nodes and edges with color black or red represent the determined AMWCS.}
 \end{figure}
 
 
@@ -389,10 +367,6 @@ For instance, consider a problem with length 4, allele $\{1, 0, 1, 1\}$ and the 
 The advantage of 2-edge AMWCS is exactly that the scheme considers the receiver{\rq}s allele in the mixing stage. For instance, consider an optimal subsolution 111, and 1-edge AMWCS detect the  strong  linkage  among  these  three bits, then build the ILS as  $\langle \{1\}, \{1, 2\}, \{1, 2, 3\}... \rangle$. Although the mask $\{1, 2, 3\}$ can flip the pattern 000 to 111, however, if the receiver{\rq}s allele pattern is 010, no mask above can flip it to 111. So even 1-edge AMWCS already detected the correct model, it does not  flip efficiently if the scheme not to take the receiver{\rq}s allele into consideration. 2-edge AMWCS can handle this problem with one of its property: The receiver{\rq}s allele is inclined to become the same specific pattern which account for the higher rate of the population, and we believe that the high ratio pattern implies the optimal subpattern in average. The reason for that is one of the characteristic of the mutual information :  If we divided the mutual information into two parts, then the part with the high-ratio pattern will be positive, and the other part usually be negative. Under this circumstance, for the example above, if the pattern 111 gets higher ratio in the population, the $I(00\cup11)$ among these nodes are positive, and the $I(01\cup10)$ among them are negative. So if the receiver{\rq}s pattern is 010, and AMWCS start with node 1. Because the edge between node 1 and node 2 is negative, the AMWCS will not add the node 2 into the candidate set in this iteration, then the ILS might be $\langle\{1\}, \{1, 3\}, ...\}\rangle$ rather than $\langle\{1\}, \{1, 2\}, \{1, 2, 3\}, ...\rangle$. And the mask $\{1, 3\}$ can flip the pattern 010 to the pattern 111 which we want.    
 
 
-\subsection{Supply bound}
-Although 2-edge AMWCS performs more efficiently in linkage building, there is still a problem in restricted mixing. In 
-the restricted mixing stage, receiver keeps trying the masks until the fitness gets better or there is no supply. The problem is that  the bit-pattern grouped together are complement to the other, so if the AMWCS add the node into the candidate set, it means the pattern and the complement pattern account for high ratio of the population, and it leads higher probability to pass the supply check. But in the early stage, because the information for model building is not clear and not accurate yet, the restricted mixing usually fails. Due to the much longer length of supply, 2-edge AMWCS wastes much more NFEs for the restricted mixing fail in the early stage. The experiment(Table 2) shows that  1-edge AMWCS performs accurately in finding the  length of model, and 2-edge AMWCS gives rise to about double size supply.
-
 \begin{table}[ht]
 \centering
 \begin{tabular}{ |c|c|c| } \hline
@@ -405,7 +379,20 @@ NFE variance					& 1,000& 1000\\ \hline
 \caption{Success rate comparison}
 \end{table}
 
+
+\subsection{Supply bound}
+Although 2-edge AMWCS performs more efficiently in linkage building, there is still a problem in restricted mixing. In 
+the restricted mixing stage, receiver keeps trying the masks until the fitness gets better or there is no supply. The problem is that  the bit-pattern grouped together are complement to the other, so if the AMWCS add the node into the candidate set, it means the pattern and the complement pattern account for high ratio of the population, and it leads higher probability to pass the supply check. But in the early stage, because the information for model building is not clear and not accurate yet, the restricted mixing usually fails. Due to the much longer length of supply, 2-edge AMWCS wastes much more NFEs for the restricted mixing fail in the early stage. The experiment(Table 2) shows that  1-edge AMWCS performs accurately in finding the  length of model, and 2-edge AMWCS gives rise to about double size supply.
+
 To handle the problem of 2-edge AMWCS supply overfitting, we decide to adopt 1-edge AMWCS for the supply check. The concept is that 2-edge AMWCS  performs more accurately in linkage building, and 1-edge AMWCS is good at model size finding. Then why not we take advantage of these techniques? The pseudocode of  the restricted mixing in the 2-edge AMWCS is given in algorithm 4.
+
+
+
+
+\subsection{Chromosome Existence Check}
+Break prevents possible cross over and limit attempts for useless function call. 
+Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
+If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
 
 
 \begin{algorithm}
@@ -425,14 +412,14 @@ ${R_M}'$: complement pattern of ${R_M}$
 \BlankLine
 %\tcp{ construct ILS }
 $V \leftarrow \{ 1, 2, ..., l \}$ \\
-$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
-%$AMWCS \leftarrow$ a random vertex $v \in V$ \\
+%$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
+$V_s \leftarrow$ a random vertex $v \in V$ \\
 remove $v$ from $V$ \\
 
 \While{$ |V| \geq l/2$} {
 
     $ILS \leftarrow ILS \cup V_{S}$ \\
-    $V_S \leftarrow V_S \cup \{v$ | the nearest vertex $v \in V \}$ \\
+    $V_S \leftarrow V_S$ $\cup$ \{ the nearest vertex $v \in V \}$ \\
     %add the nearest vertex $v \in V$ into $AMWCS$ \\
     remove $v$ from $V$ \\
 }
@@ -472,7 +459,7 @@ Six types of linkage benchmark problems are used in this paper, including four c
 
 
 \subsubsection{Concatenated trap}
-The concatenated trap is composed of m additively separable trap function, each with k variables \cite{goldberg:deception}. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing \cite{pelikan:overlap}. The fitness function is described as follows:
+The concatenated trap is composed of m additively separable trap function, each with k variables~\cite{goldberg:deception}. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing~\cite{pelikan:overlap}. The fitness function is described as follows:
 
 \begin{displaymath}
 f_{m,k}^{trap}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right )
@@ -490,7 +477,7 @@ f_{k}^{trap}(u) =
 
 
 \subsubsection{Cyclic trap}
-The cyclic trap consists of overlapping trap functions with wraparound \cite{yu:overlapping}. The fitness function is described as follows:
+The cyclic trap consists of overlapping trap functions with wraparound~\cite{yu:overlapping}. The fitness function is described as follows:
 
 \begin{displaymath}
 f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k+2}^{i\cdot(k-1)+1} x_j\right )
@@ -512,7 +499,7 @@ Given a 12-bit cyclic trap with the size of subfunction $k = 5$, the fitness of 
 
 
 \subsubsection{Folded trap}
-We use the bipolar deceptive function with the subsolution size k = 6. Each subsolution contains two global optima and lots of local optima. It is one of the multiple variants of NK-landscape problems described in \cite{goldberg:deception}. The performance depends heavily on the ability to reduce unnecessary exploration of plateaus, due to the symmetric characteristics of the trap function.  The fitness function is described as follows:
+We use the bipolar deceptive function with the subsolution size k = 6. Each subsolution contains two global optima and lots of local optima. It is one of the multiple variants of NK-landscape problems described in~\cite{goldberg:deception}. The performance depends heavily on the ability to reduce unnecessary exploration of plateaus, due to the symmetric characteristics of the trap function.  The fitness function is described as follows:
 
 
 \begin{displaymath}
@@ -533,7 +520,7 @@ f_{k=6}^{folded}(u) =
 
 
 \subsubsection{NK-landscape}
-The NK-landscape functions are composed of overlapped, randomly generated sub-functions \cite{pelikan:overlap}. There are three parameters controlling the fitness function: l is the problem size, k is the number of neighbors of one gene, and so is the step size, i.e. the offset of two adjacent sub-functions. The fitness function is given as follows:
+The NK-landscape functions are composed of overlapped, randomly generated sub-functions~\cite{pelikan:overlap}. There are three parameters controlling the fitness function: l is the problem size, k is the number of neighbors of one gene, and so is the step size, i.e. the offset of two adjacent sub-functions. The fitness function is given as follows:
 
 \begin{displaymath}
 f_{l,k,s}^{NK}(x) = \sum_{i=0}^{(l-k-1)/s} f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})
@@ -614,8 +601,8 @@ Our new techniques constructs a more precise linkage model that gives building-b
 %\end{document}  % This is where a 'short' article might terminate
 
 %ACKNOWLEDGMENTS are optional
-\section{Acknowledgments}
-The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 103-2221-E-002-177-MY2-1.
+%\section{Acknowledgments}
+%The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 103-2221-E-002-177-MY2-1.
 
 %
 % The following two commands are all you need in the
