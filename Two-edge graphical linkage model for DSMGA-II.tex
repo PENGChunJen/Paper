@@ -224,7 +224,7 @@ DSMGA-II constructs AMWCS from a certain bit,  and iteratively adds one single b
 \subsection{Restricted Mixing and Back Mixing}
 
 \subsubsection{Optimal Mixing}
-Unlike canonical genetic algorithms that generate offsprings by recombining parent solutions, DSMGA-II extends the the idea of optimal mixing (OM)~\cite{thierens:OM} with two new mixing operators: restricted mixing and back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size~\cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
+Unlike canonical genetic algorithms that generate offsprings by recombining parental solutions, DSMGA-II extends the the idea of optimal mixing (OM)~\cite{thierens:OM} with two new mixing operators: restricted mixing and back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size~\cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
 
 
 \subsubsection{Restricted Mixing}
@@ -283,8 +283,10 @@ remove $v$ from $V$ \\
 \Return ($R$, $\emptyset$) 
 \end{algorithm}
 
+
 \subsubsection{Back Mixing}
-In back mixing, every chromosome in the population is mixed with the pattern accepted in restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no chromosome fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criteria is set differently from restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement~\cite{bosman:LT-GOMEA} have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criteria often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criteria. When no improvement occurs, it switch to equal-acceptance criteria to reduce unnecessary evaluations on plateaus. The empirical experiment results suggest that back mixing is able to deal with both plateaus and diversity issues. The pseudo-code for  restricted mixing is provided in Algorithm 3.
+
+In back mixing, every chromosome in the population is mixed with the pattern accepted in restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no chromosome fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criterion is set differently from restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement~\cite{bosman:LT-GOMEA}, have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criterion often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criterion. When no improvement occurs, it switches to the equal-acceptance criterion to reduce unnecessary evaluations on plateaus. The empirical experiment results suggest that back mixing is able to deal with both plateaus and diversity issues. The pseudo-code for  restricted mixing is provided in Algorithm 3. 
 
 \begin{algorithm}
 \caption{Back Mixing}\label{algo_disjdecomp}
@@ -339,7 +341,7 @@ L( 01 \cup 01 ) &= P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{1
 \end{split}
 \end{equation}
 
-The reason for such division is to protect the pattern within each building-blocks. For building-blocks with linkage  $L(00\cup11)$, the pattern 00 might be flipped to 11 and the pattern 11 might be flipped to 00 during restricted mixing. The resulting patterns, 00 and 11, are the complements of each other, and the original patterns are reserved during mixing. Same scenario happens with pattern 01 and 10.
+The reason for such division is to protect the pattern within each building-blocks. For building-blocks with linkage  $L(00\cup11)$, the pattern 00 might be flipped to 11 and the pattern 11 might be flipped to pattern 00 during restricted mixing. The resulting patterns, 00 and 11, are the complements of each other, and the original patterns are reserved during mixing. Same scenario happens with pattern 01 and 10.
 
 
 In the two-edge AMWCS scheme, the equation for finding a node that maximize the weight of AMWCS is defined as:
@@ -348,7 +350,7 @@ In the two-edge AMWCS scheme, the equation for finding a node that maximize the 
 
 where $V$ is the candidate vertices set, and $V_s$ is the AMWCS vertices set.
 
- It is the same as the equation in the  one-edge scheme. However, unlike the one-edge AMWCS that view all patterns of a building-block equally, the alleles of receivers are taken into account in the two-edge linkage model. The rule of edge selection in the two-edge AMWCS is as follows:
+ It is the same as the equation in the  one-edge scheme. However, unlike the one-edge AMWCS that views all patterns of a building-block equally, the alleles of receivers are taken into account in the two-edge linkage model. The rule of edge selection in the two-edge AMWCS is as follows:
 
 \begin{equation}
 L(X;Y) = 
@@ -463,7 +465,7 @@ To prevent this situation, we substitute the continue operator to break for chro
 
 
 \section{EXPERIMENT RESULTS}
-In this section, we first describe the six benchmark problems. After that, the experiment setup is given. Finally, we illustrate the experiment results of the original DSMGA-II, the improved DSMGA-II, LT-GOMEA and hBOA. 
+In this section, we first briefly introduce the six benchmark problems. After that, the experiment setup is given. Finally, we illustrate the experiment results of the original DSMGA-II, the improved DSMGA-II, LT-GOMEA and hBOA. 
 
 
 \subsection{Test Problems}
