@@ -502,7 +502,11 @@ f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k
 where
 
 \begin{displaymath}
-f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k+2}^{i\cdot(k-1)+1} x_j\right )
+f_{k}^{trap}(u) = 
+   \begin{cases}
+    1, & \text{if $u=k$} \\
+    \frac{k-1-u}{k}, & \text{otherwise}
+	\end{cases}
 \end{displaymath}
 
 and
