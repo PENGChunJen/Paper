@@ -487,6 +487,8 @@ f_{k}^{trap}(u) =
 	\end{cases}
 \end{displaymath}
 
+In our experiment, $k$ is set to 5 for concatenated trap problems.
+
 
 \subsubsection{Cyclic trap}
 The cyclic trap consists of overlapping trap functions with wraparound~\cite{yu:overlapping}. The fitness function is described as follows:
@@ -507,6 +509,7 @@ and
 x_j = x_{j-l}, \text{if } l < j \leq 2l
 \end{displaymath}
 
+In our experiment, $k$ is set to 5.
 Given a 12-bit cyclic trap with the size of subfunction $k = 5$, the fitness of identifying one correct subsolution, e.g. $111110000000$ with $fitness = 2.2$, is lower than having all incorrect subsolutions, e.g. $000000000000$ with $fitness = 2.4$. Therefore, the linkage model  must not only identify the structure of subsolutions, but also take different scenarios of subsolution combinations into account for recombination to succeed.
 
 
@@ -530,6 +533,8 @@ f_{k=6}^{folded}(u) =
 	\end{cases}
 \end{displaymath}
 
+In our experiment, $k$ is set to 6 for different problem size.
+
 
 \subsubsection{NK-landscape}
 The NK-landscape functions are composed of overlapped, randomly generated sub-functions~\cite{pelikan:overlap}. There are three parameters controlling the fitness function: l is the problem size, k is the number of neighbors of one gene, and so is the step size, i.e. the offset of two adjacent sub-functions. The fitness function is given as follows:
@@ -537,6 +542,12 @@ The NK-landscape functions are composed of overlapped, randomly generated sub-fu
 \begin{displaymath}
 f_{l,k,s}^{NK}(x) = \sum_{i=0}^{(l-k-1)/s} f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})
 \end{displaymath}
+
+
+NK-S1, S3 and the non-overlapping S5 problems are selected for our comparison, since they represent problems with different degrees of overlapping. 
+NK-landscape is often considered as general cases of problems due to its randon landscape.
+In our experiment, each problem is tested on 100 randomly generated instances.
+
 
 
 \subsubsection{Ising spin-glass}
@@ -554,14 +565,37 @@ The Maximum Satisfiability problem (MAX-SAT) consists of a series of $logical an
 F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} l_{ij} \right )
 \end{displaymath}
 
-where $m$ is the number of clauses, $k_i$ is the number of literals in the $i$-th clause and $l_{ij}$ is the $j$-th literal in the $i$-th clause. Here, we use the Uniform Random-3-SAT instances from SATLIB \footnote{http://homepages.cwi.nl/$\sim$bosman/source\_code.php} with all satisfiable clauses.  
+where $m$ is the number of clauses, $k_i$ is the number of literals in the $i$-th clause and $l_{ij}$ is the $j$-th literal in the $i$-th clause. Here, we use the Uniform Random-3-SAT instances from SATLIB \footnote{http://www.satlib.org} with all satisfiable clauses.  
 
 
 \subsection{Experiment Setup}
-Since DSMGA-II is based on the idea of OM, it is necessary to compare DSMGA-II with GOMEAs. 
+DSMGA-II is an enhanced edition of DSMGA and it outperforms multiple variants of its predecesor~\cite{yu:DSMGA} in all cases. 
+Thus, we shall not discuss DSMGA in the following comparison.
+DSMGA-II is based on the idea of OM, so it is necessary to compare DSMGA-II with GOMEAs. 
+In our comparison, LT-GOMEA with forced improvement \footnote{http://homepages.cwi.nl/$\sim$bosman/source\_code.php} is used as a benchmark GOMEA algorithm.
+Although several different linkage models have been proposed over the years~\cite{bosman:robust}, LT-GOMEA~\cite{bosman:LT-GOMEA} is still considered a state-of-the-art OM algorithm.
+Also, we compare DSMGA-II with the hierarchical Bayesian optimization algorithm (hBOA)~\cite{pelikan:hBOA}
+Similar to LT-GOMEA, hBOA is also a milestone that is often used in recent EDA researches.
 
 
-Describe sweep, 10 hits and the average of 100 instances.
+A minimum population is required for a certain number of consecutive successful runs.
+However, the conventional bisection procedure~\cite{} often failed to yield the minimum NFE, since the minimum population size varies in the bisection procedure for different algorithms.
+In the following experiments, we adopt an adaptive sweeping procedure for more accurate search of minimum NFE.
+The sweeping procedure starts with a reasonalbe population size.
+The initial population size is set as 10 in this paper.
+If the algorthm cannot consecutively reach the global optimum with the given population, the population size is increased with a predefined step.
+In this paper, the initial step is set to be 30, and 10 back-to-back successful hits is defined as a successful trial.
+The mean of NFE over 10 successful runs is recorded as the minimum NFE required for a given population size.
+After a successful NFE is recorded, a smaller step is adopted to narrow down the sweeping range.
+The sweeping procedure continues until the step converges.
+In this paper, we divide the step by 2 for each iteration, and the procedure terminates if the sweeping range is within 5\% of the population size.
+The sweeping procedure gives better precision than the canonical bisection procedure, since the acquired resolution increases as the steps decreases after each successful trial.
+The resulting minimum NFE for each problem is averaged over 100 independent runs or instances.
+
+We compare DSMGA-II, LT-GOMEA, and hBOA under the following settings. The selection pressure is set as 2 for all three algorithms. 
+For DSMGA-II, the model building is performed every $\ell/50$ generations.
+LT-GOMEA is performed without local searh to enhance its performance, described in~cite{}.
+
 
 
 
