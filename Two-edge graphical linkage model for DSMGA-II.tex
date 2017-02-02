@@ -510,7 +510,7 @@ x_j = x_{j-l}, \text{if } l < j \leq 2l
 \end{displaymath}
 
 In our experiment, $k$ is set to 5.
-Given a 12-bit cyclic trap with the size of subfunction $k = 5$, the fitness of identifying one correct subsolution, e.g. $111110000000$ with $fitness = 2.2$, is lower than having all incorrect subsolutions, e.g. $000000000000$ with $fitness = 2.4$. Therefore, the linkage model  must not only identify the structure of subsolutions, but also take different scenarios of subsolution combinations into account for recombination to succeed.
+Given a 12-bit cyclic trap with the size of subfunction $k = 5$, the fitness of identifying one correct subsolution, e.g. $111110000000$ with $fitness = 2.2$, is lower than having all incorrect subsolutions, e.g. $00000\\0000000$ with $fitness = 2.4$. Therefore, the linkage model  must not only identify the structure of subsolutions, but also take different scenarios of subsolution combinations into account for recombination to succeed.
 
 
 \subsubsection{Folded trap}
@@ -689,10 +689,12 @@ The result shows the ability of the ILS model in handling randomly generated ove
 The difference between DSMGA-II and other algorithms enlarges as the degree of overlapping decreases. 
 When coping with severly overlapped structures, DSMGA-II requires more NFE during graph refining process.
 Once the linkage information stands out, the back mixing operator allows the correct pattern to dominate the population instantly 
+The two-edge model provides far more linkage combinations in solution space.
+Generating ILS from the abundant combinations in the two-edge AMWCS results in more flexible and better customized models.
+These models enable DSMGA-II to handle overlapping problems nicely. 
 
 
 \subsubsection{ Comparison on real-world problems }
-
 
 \begin{figure}
 \centering
@@ -700,6 +702,12 @@ Once the linkage information stands out, the back mixing operator allows the cor
 \caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $\ell=100$ on MAX-SAT).}
 \end{figure}
 
+For results of Ising spin-glass problems in Figure 6, the slope of DSMGA-II decreases as the problem size increases. 
+This is due to the numerous numbers of plateaus in the spin-glass problems.
+As discussed in Section 4.3.1, converging the population for plateaus is where the advantages of DSMGA-II holds.
+Moreover, the slope indicates the overall fitness evaluation grows polynomially as $O(n^3)$, which is close to the best known results of problem-specific algorithm for Ising spin-glass~\cite{galluccio:pfaffian}
+
+For MAX-SAT problems, although the NFE seems to grow exponentially, DSMGA-II still requires the fewest evalutions among the three algorithms.
 
 
 
