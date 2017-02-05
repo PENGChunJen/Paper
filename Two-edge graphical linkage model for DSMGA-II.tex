@@ -2,7 +2,7 @@
 
 \documentclass{sig-alternate-05-2015}
 \usepackage[vlined, ruled]{algorithm2e}
-
+\usepackage{multirow}
 \begin{document}
 
 %\setcopyright{acmlicensed}
@@ -228,7 +228,7 @@ Unlike canonical genetic algorithms that generate offsprings by recombining pare
 
 \subsubsection{Restricted Mixing}
 
-In in each iteration of restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. Each mask is a set of indices that indicates which bits should be flipped together during mixing operations. All masks in the ILS must go through a supply check to make sure that the complement pattern of the receiver exists in the population. This way, flipping the bits is equivalent to recombining the receiver with the complement pattern. After supply check, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. If the fitness does not decrease after recombination, the pattern is accepted and restricted mixing terminates. The receiver then becomes the donor of the new pattern for rest the population in back mixing. 
+In in each iteration of restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. Each mask is a set of indices that indicates which bits should be flipped together during mixing operations. All masks in the ILS must go through a supply check to make sure that the complement pattern of the receiver exists in the population.  After supply check, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. If the fitness does not decrease after recombination, the pattern is accepted and restricted mixing terminates. The receiver then becomes the donor of the new pattern for rest the population in back mixing. 
 
 
 The idea behind restricted mixing is building-block supply~\cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. The pseudo-code for  restricted mixing is provided in Algorithm 2.
@@ -376,15 +376,19 @@ On the other hand, two-edge graphical linkage model  handles this problem by tak
 
 
 \begin{table}[ht]
-\centering
-\begin{tabular}{ |c|c|c| } \hline
-Parameters & Continue & Break \\ \hline
-Success rate 					& 1,000& 1000\\ \hline
-Cross competition occurrence	& 1,000& 1000\\ \hline
-NFE mean				 		& 1,000& 1000\\ \hline
-NFE variance					& 1,000& 1000\\ \hline
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ &
+\multicolumn{2}{c|}{Supply length} &
+\multicolumn{2}{c|}{Failure NFE in BM} \\
+\hline
+Problems  & One-edge & Two-edge & One-edge & Two-edge \\\hline
+NK-S1 & 12.6 & 6.9  &51.3 & 43.4 \\\hline
+NK-S3 & 13.2 & 6.9  &48.8 & 42.3 \\\hline
+NK-S5 & 6.7 &2.6  & 10.1 & 8.9 \\\hline
+
 \end{tabular}
-\caption{Success rate comparison}
+\caption{Supply length and BM failure comparison}
 \end{table}
 
 
@@ -475,11 +479,11 @@ In this section, we first briefly introduce the six benchmark problems. After th
 
 
 \subsection{Test Problems}
-Six types of linkage benchmark problems are used in this paper, including four classical linkage-underlying problems and two real-world problems. These benchmark problems each covers different aspects and characteristics of real-world problems. Detail descriptions of the six benchmark problems are as follows.
+ Six types of linkage benchmark problems are used in this paper, including four classical linkage-underlying problems and two real-world problems. These benchmark problems each covers different aspects and characteristics of real-world problems. The Concatenated Trap is composed of m additively separable trap functions, each with k variables [8]. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing [9]. The Cyclic Trap consists of overlapping trap functions with wraparound [10]. The Folded trap is one of the multiple variants of NK-landscape problems described in [11]. We use the bipolar deceptive function with the subsolution size k = 6. Each subsolution contains two global optima and lots of local optima. It The performance depends heavily on the ability of reducing unnecessary exploration of plateaus due to the symmetric characteristics of the trap function. The NK-landscape functions are composed of overlapped and randomly generated sub-functions [12]. Each instance is controlled by three parameters: the problem size l, the number of neighbors of one gene k, and the step size s, i.e. the offset of two adjacent sub-functions. We use NK-landscape with step 1, 3 and 5 to represent problems with different degrees of overlapping in our experiments. The Ising spin-glass gives a set of variables in one of the two states {+1, -1}. For each pair of neighboring spins i and j, there exists a coupling constant Jij. The goal is to find a combination of states that satisfies the most coupling pairs. The Maximum Satisfiability problem (MAX-SAT) consists of a series of logical and clauses. Each clause contains a series of logical or variables. It is a classical NP-complete problem.  
 
 
 \subsubsection{Concatenated trap}
-The concatenated trap is composed of m additively separable trap function, each with k variables~\cite{goldberg:deception}. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing~\cite{pelikan:overlap}. The fitness function is described as follows:
+
 
 \begin{displaymath}
 f_{m,k}^{trap}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right )
@@ -495,11 +499,11 @@ f_{k}^{trap}(u) =
 	\end{cases}
 \end{displaymath}
 
-In our experiment, $k$ is set to 5 for concatenated trap problems.
+
 
 
 \subsubsection{Cyclic trap}
-The cyclic trap consists of overlapping trap functions with wraparound~\cite{yu:overlapping}. The fitness function is described as follows:
+
 
 \begin{displaymath}
 f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k+2}^{i\cdot(k-1)+1} x_j\right )
@@ -521,12 +525,11 @@ and
 x_j = x_{j-l}, \text{if } l < j \leq 2l
 \end{displaymath}
 
-In our experiment, $k$ is set to 5.
-Given a 12-bit cyclic trap with the size of subfunction $k = 5$, the fitness of identifying one correct subsolution, e.g. $111110000000$ with $fitness = 2.2$, is lower than having all incorrect subsolutions, e.g. $00000\\0000000$ with $fitness = 2.4$. Therefore, the linkage model  must not only identify the structure of subsolutions, but also take different scenarios of subsolution combinations into account for recombination to succeed.
+
 
 
 \subsubsection{Folded trap}
-We use the bipolar deceptive function with the subsolution size k = 6. Each subsolution contains two global optima and lots of local optima. It is one of the multiple variants of NK-landscape problems described in~\cite{goldberg:deception}. The performance depends heavily on the ability to reduce unnecessary exploration of plateaus, due to the symmetric characteristics of the trap function.  The fitness function is described as follows:
+
 
 
 \begin{displaymath}
@@ -545,39 +548,25 @@ f_{k=6}^{folded}(u) =
 	\end{cases}
 \end{displaymath}
 
-In our experiment, $k$ is set to 6 for different problem size.
-
 
 \subsubsection{NK-landscape}
-The NK-landscape functions are composed of overlapped, randomly generated sub-functions~\cite{pelikan:overlap}. There are three parameters controlling the fitness function: l is the problem size, k is the number of neighbors of one gene, and so is the step size, i.e. the offset of two adjacent sub-functions. The fitness function is given as follows:
 
 \begin{displaymath}
 f_{l,k,s}^{NK}(x) = \sum_{i=0}^{(l-k-1)/s} f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})
 \end{displaymath}
 
 
-NK-S1, S3 and the non-overlapping S5 problems are selected for our comparison, since they represent problems with different degrees of overlapping. 
-NK-landscape is often considered as general cases of problems due to its randon landscape.
-In our experiment, each problem is tested on 100 randomly generated instances.
-
-
-
 \subsubsection{Ising spin-glass}
-The Ising spin-glass gives a set of variables in one of the two states $\{+1, -1\}$. For each pair of neighboring spins $i$ and $j$, there exists a coupling constant $Jij$. The goal is to find a combination of states that minimizes the fitness function described as follows:
 
 \begin{displaymath}
 f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}
 \end{displaymath}
 
-
 \subsubsection{MAX-SAT}
-The Maximum Satisfiability problem (MAX-SAT) consists of a series of $logical and$ clauses. Each clause contains a series of $logical or$ variables. It is a classical NP-complete problem. The fitness function is described as follows:  
 
 \begin{displaymath}
 F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} l_{ij} \right )
 \end{displaymath}
-
-where $m$ is the number of clauses, $k_i$ is the number of literals in the $i$-th clause and $l_{ij}$ is the $j$-th literal in the $i$-th clause. Here, we use the Uniform Random-3-SAT instances from SATLIB \footnote{http://www.satlib.org} with all satisfiable clauses.  
 
 
 \subsection{Experiment Setup}
@@ -619,14 +608,13 @@ LT-GOMEA is performed without local searh to enhance its performance, described 
 \centering
 \begin{tabular}{ |c|c|c|c| } \hline
 \textbf{Problems}& \textbf{Original} & \textbf{Improved} & \textbf{Ratio}\\ \hline
-\textbf{Concat. trap}, $\ell = 400$ 	& 1,000& 1000&1\%\\ \hline
-\textbf{Cyclic trap}, $\ell = 400$ 		& 1,000& 1000&1\%\\ \hline
-\textbf{Folded trap}, $\ell = 480$	 	& 1,000& 1000&1\%\\ \hline
-\textbf{NK-S1}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
-\textbf{NK-S3}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
-\textbf{NK-S5}, $\ell = 400$ 				& 1,000& 1000&1\%\\ \hline
-\textbf{Ising spin-glass}, $\ell = 784$ 	& 1,000& 1000&1\%\\ \hline
-\textbf{MAX-SAT}, $\ell = 200$ 			& 1,000& 1000&1\%\\ \hline
+\textbf{Cyclic trap}, $\ell = 400$ 		& 123.1&111.5&9.4\%\\ \hline
+\textbf{Folded trap}, $\ell = 480$	 	& 354.5& 243.2&31.4\%\\ \hline
+\textbf{NK-S1}, $\ell = 400$ 				& 767.4& 701.6&8.5\%\\ \hline
+\textbf{NK-S3}, $\ell = 400$ 				& 550.5& 533.5&3.1\%\\ \hline
+\textbf{NK-S5}, $\ell = 400$ 				& 62.0& 59.5&4.1\%\\ \hline
+\textbf{Ising spin-glass}, $\ell = 784$ 	& 863.2&684.5&20.7\%\\ \hline
+\textbf{MAX-SAT}, $\ell = 200$ 			& 7593.3& 5655.1&25.5\%\\ \hline
 \end{tabular}
 \caption{Required NFE of DSMGA-II for the largest test problems}
 \end{table}
@@ -708,11 +696,7 @@ These models enable DSMGA-II to handle overlapping problems nicely.
 
 \subsubsection{ Comparison on real-world problems }
 
-\begin{figure}
-\centering
-\includegraphics[width=3.3in]{spin_satResults}
-\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $\ell=100$ on MAX-SAT).}
-\end{figure}
+
 
 For results of Ising spin-glass problems in Figure 6, the slope of DSMGA-II decreases as the problem size increases. 
 This is due to the numerous numbers of plateaus in the spin-glass problems.
@@ -729,6 +713,11 @@ Some new techniques are also adopted to constructs a more precise linkage model 
 We also show that early-stopping technique can reduce the probability of cross-competition, allowing DSMGA-II to solve the benchmark problems with a smaller population and less NFE.
 The improved DSMGA-II decrease NFE by up to 20\% compared with the original version. It also outperforms LT-GOMEA and hBOA on multiple benchmark problems. 
 
+\begin{figure}
+\centering
+\includegraphics[width=3.3in]{spin_satResults}
+\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $\ell=100$ on MAX-SAT).}
+\end{figure}
 %\end{document}  % This is where a 'short' article might terminate
 
 %ACKNOWLEDGMENTS are optional
