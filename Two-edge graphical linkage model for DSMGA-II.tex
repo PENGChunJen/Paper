@@ -3,6 +3,7 @@
 \documentclass{sig-alternate-05-2015}
 \usepackage[vlined, ruled]{algorithm2e}
 \usepackage{multirow}
+\usepackage{booktabs}
 \begin{document}
 
 %\setcopyright{acmlicensed}
@@ -150,12 +151,12 @@ $s$: selection pressure, $R$: constant, \\
 $DSM$: dependency structure matrix, $M$: mask \\
 
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{ $l$: problem size, $p$: population size }
+\Input{ $\ell$: problem size, $p$: population size }
 \Output{ $P_{best}$ }
 
 \BlankLine
 
-$P \leftarrow$ \PopulationInitialization{$l$, $p$} \\
+$P \leftarrow$ \PopulationInitialization{$\ell$, $p$} \\
 $P \leftarrow$ \GHC{$P$} \\
 \While{not \ShouldTerminate}{
     $S \leftarrow$ \TournamentSelection{$P$, $s$} \\
@@ -172,7 +173,7 @@ $P \leftarrow$ \GHC{$P$} \\
         }
     }
 }
-\Return best instance in $P$
+\Return best individual in $P$
 \end{algorithm}
 
 
@@ -238,7 +239,7 @@ The idea behind restricted mixing is building-block supply~\cite{goldberg:buildi
 
 $V$: candidate vertices set, $V_S$: $AMWCS$ vertices set,  \\
 $ILS$: incremental linkage set, $f$: evaluation function, \\
-$P$: population, $l$: problem size, \\
+$P$: population, $\ell$: problem size, \\
 $T$: trial solution, $M$: mask, \\
 ${R_M}$: pattern of $R$ extracted by $M$, \\
 ${R_M}'$: complement pattern of ${R_M}$
@@ -249,15 +250,15 @@ ${R_M}'$: complement pattern of ${R_M}$
 
 \BlankLine
 %\tcp{ construct ILS }
-$V \leftarrow \{ 1, 2, ..., l \}$ \\
+$V \leftarrow \{ 1, 2, ..., \ell \}$ \\
 %$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
-$V_s \leftarrow$ a random vertex $v \in V$ \\
+$V_s \leftarrow$ \{a random vertex $v \in V$\} \\
 remove $v$ from $V$ \\
 
-\While{$ |V| \geq l/2$} {
+\While{$ |V| \geq \ell/2$} {
 
     $ILS \leftarrow ILS \cup V_{S}$ \\
-    $V_S \leftarrow V_S$ $\cup$ \{ the nearest vertex $v \in V \}$ \\
+    $V_S \leftarrow V_S$ $\cup$ \{  $v$ with the max {\it linkage} \} \\
     %add the nearest vertex $v \in V$ into $AMWCS$ \\
     
     remove $v$ from $V$ \\
@@ -408,7 +409,7 @@ Furthermore, we also find the one-edge graph supply bound benefits restricted mi
 
 $V$: candidate vertices set, $V_S$: $AMWCS$ vertices set,  \\
 $ILS$: incremental linkage set, $f$: evaluation function, \\
-$P$: population, $l$: problem size, \\
+$P$: population, $\ell$: problem size, \\
 $T$: trial solution, $M$: mask, \\
 ${R_M}$: pattern of $R$ extracted by $M$, \\
 ${R_M}'$: complement pattern of ${R_M}$
@@ -419,12 +420,12 @@ ${R_M}'$: complement pattern of ${R_M}$
 
 \BlankLine
 %\tcp{ construct ILS }
-$V \leftarrow \{ 1, 2, ..., l \}$ \\
+$V \leftarrow \{ 1, 2, ..., \ell \}$ \\
 %$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
 $V_s \leftarrow$ a random vertex $v \in V$ \\
 remove $v$ from $V$ \\
 
-\While{$ |V| \geq l/2$} {
+\While{$ |V| \geq \ell/2$} {
 
     $ILS \leftarrow ILS \cup V_{S}$ \\
     $V_S \leftarrow V_S$ $\cup$ \{ the nearest vertex $v \in V \}$ \\
@@ -469,6 +470,55 @@ To prevent this situation, we terminate restricted mixing whenever the new gener
 
 
 
+\begin{table*}[ht]
+\centering
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\begin{tabular}{| c| c | c| c |}
+
+\hline
+Problems  & Equation & Problems & Equations\\\hline
+ \tabincell{c}{Concatenated\\ trap} & 
+
+ \tabincell{c} {$f_{m,k}^{trap}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right ),$ \\
+where 
+\\
+$f_{k}^{trap}(u) =
+   \begin{cases}
+    1, & \text{if $u=k$} \\
+    \frac{k-1-u}{k}, & \text{otherwise}\end{cases}$
+}
+
+
+
+   &  \tabincell{c}{Folded \\trap}   &  \tabincell{c} {$f_{m,k=6}^{folded}(x) = \sum_{i=1}^{m} f_{k=6}^{folded} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right )$,
+\\
+where
+\\
+  $f_{k=6}^{folded}(u) = 
+   \begin{cases}
+    1, 		& \text{if $|u=3| = 3$} \\
+    0.8, 	& \text{if $|u=3| = 0$} \\
+    0.4, 	& \text{if $|u=3| = 1$} \\
+    0, 		& \text{if $|u=3| = 2$} \\
+	\end{cases}$}
+ \\\hline
+  \tabincell{c}{Cyclic\\ trap} & \tabincell{c}  {$f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k+2}^{i\cdot(k-1)+1} x_j\right )$,
+\\
+where
+\\
+ $f_{k}^{trap}(u) = 
+   \begin{cases}
+    1, & \text{if $u=k$} \\
+    \frac{k-1-u}{k}, & \text{otherwise}
+	\end{cases}$}
+
+   &NK-landscape   &  \tabincell{c}{  $f_{l,k,s}^{NK}(x) = \sum_{i=0}^{(l-k-1)/s}$\\$ f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})$}
+  \\\hline
+Ising spin-glass & $f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}$  &MAX-SAT   &   $F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} l_{ij} \right )$\\\hline
+
+\end{tabular}
+\caption{Supply length and BM failure comparison}
+\end{table*}
 
 
 
@@ -482,91 +532,6 @@ In this section, we first briefly introduce the six benchmark problems. After th
  Six types of linkage benchmark problems are used in this paper, including four classical linkage-underlying problems and two real-world problems. These benchmark problems each covers different aspects and characteristics of real-world problems. The Concatenated Trap is composed of m additively separable trap functions, each with k variables [8]. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing [9]. The Cyclic Trap consists of overlapping trap functions with wraparound [10]. The Folded trap is one of the multiple variants of NK-landscape problems described in [11]. We use the bipolar deceptive function with the subsolution size k = 6. Each subsolution contains two global optima and lots of local optima. It The performance depends heavily on the ability of reducing unnecessary exploration of plateaus due to the symmetric characteristics of the trap function. The NK-landscape functions are composed of overlapped and randomly generated sub-functions [12]. Each instance is controlled by three parameters: the problem size l, the number of neighbors of one gene k, and the step size s, i.e. the offset of two adjacent sub-functions. We use NK-landscape with step 1, 3 and 5 to represent problems with different degrees of overlapping in our experiments. The Ising spin-glass gives a set of variables in one of the two states {+1, -1}. For each pair of neighboring spins i and j, there exists a coupling constant Jij. The goal is to find a combination of states that satisfies the most coupling pairs. The Maximum Satisfiability problem (MAX-SAT) consists of a series of logical and clauses. Each clause contains a series of logical or variables. It is a classical NP-complete problem.  
 
 
-\subsubsection{Concatenated trap}
-
-
-\begin{displaymath}
-f_{m,k}^{trap}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right )
-\end{displaymath}
-
-where
-
-\begin{displaymath}
-f_{k}^{trap}(u) = 
-   \begin{cases}
-    1, & \text{if $u=k$} \\
-    \frac{k-1-u}{k}, & \text{otherwise}
-	\end{cases}
-\end{displaymath}
-
-
-
-
-\subsubsection{Cyclic trap}
-
-
-\begin{displaymath}
-f_{m,k}^{cyclic}(x) = \sum_{i=1}^{m} f_{k}^{trap} \left (\sum_{j = i\cdot(k-1)-k+2}^{i\cdot(k-1)+1} x_j\right )
-\end{displaymath}
-
-where
-
-\begin{displaymath}
-f_{k}^{trap}(u) = 
-   \begin{cases}
-    1, & \text{if $u=k$} \\
-    \frac{k-1-u}{k}, & \text{otherwise}
-	\end{cases}
-\end{displaymath}
-
-and
-
-\begin{displaymath}
-x_j = x_{j-l}, \text{if } l < j \leq 2l
-\end{displaymath}
-
-
-
-
-\subsubsection{Folded trap}
-
-
-
-\begin{displaymath}
-f_{m,k=6}^{folded}(x) = \sum_{i=1}^{m} f_{k=6}^{folded} \left (\sum_{j = i\cdot k-k+1}^{i\cdot k} x_j\right )
-\end{displaymath}
-
-where
-
-\begin{displaymath}
-f_{k=6}^{folded}(u) = 
-   \begin{cases}
-    1, 		& \text{if $|u=3| = 3$} \\
-    0.8, 	& \text{if $|u=3| = 0$} \\
-    0.4, 	& \text{if $|u=3| = 1$} \\
-    0, 		& \text{if $|u=3| = 2$} \\
-	\end{cases}
-\end{displaymath}
-
-
-\subsubsection{NK-landscape}
-
-\begin{displaymath}
-f_{l,k,s}^{NK}(x) = \sum_{i=0}^{(l-k-1)/s} f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})
-\end{displaymath}
-
-
-\subsubsection{Ising spin-glass}
-
-\begin{displaymath}
-f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}
-\end{displaymath}
-
-\subsubsection{MAX-SAT}
-
-\begin{displaymath}
-F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} l_{ij} \right )
-\end{displaymath}
 
 
 \subsection{Experiment Setup}
