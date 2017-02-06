@@ -426,8 +426,9 @@ Furthermore, we also find the one-edge graph supply bound benefits restricted mi
 \begin{algorithm}
 \caption{Modified Restricted Mixing}\label{algo_disjdecomp}
 
-$V$: candidate vertices set, $V_S$: $AMWCS$ vertices set,  \\
-$ILS$: incremental linkage set, $f$: evaluation function, \\
+$ILS\_one$: one-edge incremental linkage set,\\
+$ILS\_two$: two-edge incremental linkage set,\\
+$f$: evaluation function, \\
 $P$: population, $\ell$: problem size, \\
 $T$: trial solution, $M$: mask, \\
 ${R_M}$: pattern of $R$ extracted by $M$, \\
@@ -437,27 +438,25 @@ ${R_M}'$: complement pattern of ${R_M}$
 \Input{ $R$: receiver }
 \Output{ $R$: reciever, $M$: mask }
 
+
 \BlankLine
-%\tcp{ construct ILS }
-$V \leftarrow \{ 1, 2, ..., \ell \}$ \\
-%$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
-$V_s \leftarrow$ a random vertex $v \in V$ \\
-remove $v$ from $V$ \\
-
-\While{$ |V| \geq \ell/2$} {
-
-    $ILS \leftarrow ILS \cup V_{S}$ \\
-    $V_S \leftarrow V_S$ $\cup$ \{ the nearest vertex $v \in V \}$ \\
-    %add the nearest vertex $v \in V$ into $AMWCS$ \\
-    remove $v$ from $V$ \\
+$ILS\_one  \leftarrow ConstructILS($one-edge$)$\\
+$ILS\_two  \leftarrow ConstructILS($two-edge$)$
+\BlankLine
+\For{$i \leftarrow 1$ \KwTo $|ILS\_one|$} {
+    $M \leftarrow ILS\_one_i$ \\
+    \If {${R_M}' \not\subset P$} {
+        $ SupplyBound \leftarrow i$
+       
+    }
 }
 
 \BlankLine
-\For{$i \leftarrow 1$ \KwTo $|ILS|$} {
+\For{$i \leftarrow 1$ \KwTo $|ILS\_two|$} {
 
-    $M \leftarrow ILS_i$ \\
+    $M \leftarrow ILS\_two_i$ \\
 
-    \If {${R_M}' \subset P$} {
+    \If {${R_M}' \subset P$ and i < SupplyBound} {
 
         $T \leftarrow R$ \\
         $T_M \leftarrow {R_M}'$ \\
