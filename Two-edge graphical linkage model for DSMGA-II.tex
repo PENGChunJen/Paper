@@ -546,7 +546,7 @@ $f_{\ell,k,s}^{NK}(x) = \sum_{i=0}^{(\ell-k-1)/s}$\\
 \\
 $ f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})$}
 \\\hline
-Ising spin-glass & $f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}$  &MAX-SAT   &   $F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} \ell_{ij} \right )$\\\hline
+2D spin-glass & $f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}$  &MAX-SAT   &   $F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} \ell_{ij} \right )$\\\hline
 
 \end{tabular}
 \caption{Equations of the bechmark problems}
@@ -610,7 +610,7 @@ LT-GOMEA is performed without local searh to enhance its performance, described 
 \textbf{NK-S1}, $\ell = 400$ 				& 767.4& 701.6&8.5\%\\ \hline
 \textbf{NK-S3}, $\ell = 400$ 				& 550.5& 533.5&3.1\%\\ \hline
 \textbf{NK-S5}, $\ell = 400$ 				& 62.0& 59.5&4.1\%\\ \hline
-\textbf{Ising spin-glass}, $\ell = 784$ 	& 863.2&684.5&20.7\%\\ \hline
+\textbf{2D spin-glass}, $\ell = 784$ 	& 863.2&684.5&20.7\%\\ \hline
 \textbf{MAX-SAT}, $\ell = 200$ 			& 7593.3& 5655.1&25.5\%\\ \hline
 \end{tabular}
 \caption{Required NFE of DSMGA-II for the largest test problems}
