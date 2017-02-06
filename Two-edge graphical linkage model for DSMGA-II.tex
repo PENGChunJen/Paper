@@ -573,7 +573,7 @@ DSMGA-II is based on the idea of OM, so it is necessary to compare DSMGA-II with
 In our comparison, LT-GOMEA with forced improvement \footnote{http://homepages.cwi.nl/$\sim$bosman/source\_code.php} is used as a benchmark GOMEA algorithm.
 Although several different linkage models have been proposed over the years~\cite{bosman:robust}, LT-GOMEA~\cite{bosman:LT-GOMEA} is still considered a state-of-the-art OM algorithm.
 Also, we compare DSMGA-II with the hierarchical Bayesian optimization algorithm (hBOA)~\cite{pelikan:hBOA}
-Similar to LT-GOMEA, hBOA is also a milestone and is often used in recent EDA researches.
+Similar to LT-GOMEA, hBOA is also a milestone and is often used in recent Model-Building GAs researches.
 
 
 A minimum population is required for a certain number of consecutive successful runs.
@@ -617,7 +617,7 @@ LT-GOMEA is performed without local searh to enhance its performance, described 
 \end{table}
 
 Comparing with the original DSMGA-II, the new DSMGA-II with our new techniques show superior performance on all six benchmark problems.
-In Table 2, comparison between our new techniques along with the original DSMGA-II are shown only with the largest problem size since the improvement is relatively minor with smaller problems. 
+In Table 3, comparison between our new techniques along with the original DSMGA-II are shown only with the largest problem size since the improvement is relatively minor with smaller problems. 
 The results indicate that the new DSMGA-II with our new techniques can reduce NFE up to 30\% compared to the original DSMGA-II. 
 
 
@@ -650,7 +650,7 @@ The following parts divides the six benchmark problems in three categories accor
 \subsubsection{ Comparison on deceptive variants }
 
 
-We first consider the deceptive problems in Figure 2.
+We first consider the deceptive problems in Figure 4.
 For concatenated trap problems, DSMGA-II requires less NFE than LT-GOMEA and hBOA.
 For folded trap problems, the two-edge model helps aligned the receiver with the promenant pattern in population.
 Together with back mixing, the pattern soon dominates the population, and the population is able to jump out of the plateau. 
@@ -681,7 +681,7 @@ Once the model 00000 is selected during mixing, the 111100000 can be flipped to 
 \end{figure}
 
 
-The NK series in Figure 2.
+The NK series in Figure 5.
 The result shows the ability of the ILS model in handling randomly generates overlapping problems. 
 The difference between DSMGA-II and other algorithms enlarges as the degree of overlapping decreases. 
 When coping with severly overlapped structures, DSMGA-II requires more NFE during graph refining process.
