@@ -383,6 +383,19 @@ Consider a longer instance with an optimal subsolution 111 similar to the three-
 We believe that the ratio of a pattern in the population corresponds to the possibility of such pattern being the optimal subsolution. The two-edge model tends to align the alleles of receiver  with the dominant patterns in the population. The reason for such tendency lies in the characteristic of mutual information. Since the mutual information between two bits is divided into two parts in the two-edge graph,  the  linkage containing the high-ratio pattern  is always positive, while the other part is often negative.  In the example above, if the optimal subsolution 111 is prominent in the population, then the linkages $L(00\cup11)$ among these nodes should be positive, and the linkages $L(01\cup10)$ are likely negative.  
 
 
+
+\begin{figure}
+\centering
+\includegraphics[width=3.3in]{SupplyBound}
+\caption{Population $ P $ is on the left, and receiver $ R  = P_{1} $ is on the right. For both building-blocks 1 and 2, the subproblem optimal pattern is 010, and the suboptimal patterns are 000, 111. Masks with no supply of complement patterns are crossed out. Restricted mixing adopting the one-edge ILS stops at $ L_{2}$ due to lack of supply for longer masks. Restricted mixing adopting the two-edge ILS stops at $ L_{4} $ since a chromosome with equal fitness is generated.}
+\end{figure}
+
+
+
+\subsection{Supply bound}
+Although taking the receivers into account enhance the effectiveness of bit-flipping, we find the two-edge scheme costs more evaluations in the mixing stage, especially during back mixing. The reason behind this phenomenon is supply overfitting. After selecting an edge in the two-edge graph, only the complement patterns are taken into account. For each pair of bits, the possible patterns are narrowed down to either \{00, 11\} or \{01, 10\}. Besides, we choose the node that gives the maximum linkage during model construction, meaning that the two selected patterns should have higher ratio in the population. Therefore, given a model constructed by a two-edge graph implies a higher possibility of finding the complement pattern in the population. This gives the models that are customized for a specific receiver a greater chance to pass the supply check. Figures 1(a) and 1(c) demonstrate the model construction with one-edge graph and two-edge graph for a receiver 010 starting with node 1. In the second iteration, picking node 3 instead of node 2 implies the ratio of patterns \{00, 11\} between nodes 1 and 3 is higher than the ratio of patterns \{01,10\} between nodes 1 and 2. Compared to the model constructed by one-edge graph in Figure 1(a), the model in Figure 1(c) is more likely to pass the supply check since the complement pattern has a higher ratio in the population. 
+
+
 \begin{table}[ht]
 \begin{tabular}{|c|c|c|c|c|}
 \hline
@@ -398,18 +411,6 @@ NK-S5 & 2.6  &6.7  &  8.9& 10.1 \\\hline
 \end{tabular}
 \caption{Supply length and BM failure comparison}
 \end{table}
-
-\begin{figure}
-\centering
-\includegraphics[width=3.3in]{SupplyBound}
-\caption{Population $ P $ is on the left, and receiver $ R  = P_{1} $ is on the right. For both building-blocks 1 and 2, the subproblem optimal pattern is 010, and the suboptimal patterns are 000, 111. Masks with no supply of complement patterns are crossed out. Restricted mixing adopting the one-edge ILS stops at $ L_{2}$ due to lack of supply for longer masks. Restricted mixing adopting the two-edge ILS stops at $ L_{4} $ since a chromosome with equal fitness is generated.}
-\end{figure}
-
-
-
-\subsection{Supply bound}
-Although taking the receivers into account enhance the effectiveness of bit-flipping, we find the two-edge scheme costs more evaluations in the mixing stage, especially during back mixing. The reason behind this phenomenon is supply overfitting. After selecting an edge in the two-edge graph, only the complement patterns are taken into account. For each pair of bits, the possible patterns are narrowed down to either \{00, 11\} or \{01, 10\}. Besides, we choose the node that gives the maximum linkage during model construction, meaning that the two selected patterns should have higher ratio in the population. Therefore, given a model constructed by a two-edge graph implies a higher possibility of finding the complement pattern in the population. This gives the models that are customized for a specific receiver a greater chance to pass the supply check. Figures 1(a) and 1(c) demonstrate the model construction with one-edge graph and two-edge graph for a receiver 010 starting with node 1. In the second iteration, picking node 3 instead of node 2 implies the ratio of patterns \{00, 11\} between nodes 1 and 3 is higher than the ratio of patterns \{01,10\} between nodes 1 and 2. Compared to the model constructed by one-edge graph in Figure 1(a), the model in Figure 1(c) is more likely to pass the supply check since the complement pattern has a higher ratio in the population. 
-
 The customized model is effective in restricted mixing, but when the receiver becomes the donor in back mixing, this model is considered to be overfitting the donor. The experiment results in Table 1 show that the average supply bound of the two-edge graph is about two times longer than the one-edge counterpart. Normally, the supply bound prohibits recombination of longer patterns. However, when using the supply bound that is overfitting the donor in back mixing, it is likely to try more patterns or even copy the complete chromosome to each receiver in the population. This increase failure attempts and also the probability of cross competition in back mixing. 
 
 To avoid overfitting supply bound, we adopt the one-edge graph for the supply bound. The major difference is that the linkage measure in the one-edge graph is calculated with complete mutual information, which represents the global information of population. On the other hand, the linkage measure in the two-edge graph is more skewed that favors the given receiver during model building. Therefore, using the supply bound of the one-edge graph secures the global information between bits and does not over fit a specific chromosome. This gives a better result in back mixing and reduce NFE.
@@ -422,6 +423,7 @@ Furthermore, we also find the one-edge graph supply bound benefits restricted mi
 \includegraphics[width=3.3in]{IsinP}
 \caption{An example of early termination criteria. Population $ P $ is on the left, and receiver $ R  = P_{1} $ is on the right.}
 \end{figure}
+
 
 \begin{algorithm}
 \caption{Modified Restricted Mixing}\label{algo_disjdecomp}
@@ -474,20 +476,12 @@ $ILS\_two  \leftarrow ConstructILS($two-edge$)$
 \Return ($R$, $\emptyset$) 
 \end{algorithm}
 
-
 \subsection{Early Termination Criterion}
 %Break prevents possible cross over and limit attempts for useless function call. 
 %Demo by table, showing how many attempt is useless after isInP and how often does cross competition occur
 %If a mask failed the supply check, all masks with larger size behind it in the ordered ILS are discarded.
 
 We propose a new termination criterion for restricted mixing that eliminates unnecessary trials and reduce NFE. During restricted mixing, the masks in the ILS are tried in an ascending order regarding to the mask size. If the new pattern gives worse fitness value than the original one, the receiver continues to try bit-flipping with the next larger mask. This bit-flipping process only terminates if the fitness of the generated chromosome is greater or equal to the fitness of the original receiver. However, this termination criterion might costs unnecessary evaluations since the recombination occasionally creates a chromosome that exists in the population. 
-
-For example, consider a five-bit trap problem with global optimum 11111 and local optimum 00000 in Figure 3. $P_{1}$ is chosen as receiver in restricted mixing. Suppose the masks in ILS follow the sequence \{1,2,3,4,5\} and the complement patterns for all five models exist in the population. Restricted mixing starts bit flipping with node 1 and failed since pattern 10110 is inferior to the original pattern 00110 in trap problems. After performing bit-flipping with the second mask \{1,2\}, the resulting pattern 11110 exists in the population($P_{3}$). Given the original termination criteria, 11110 is inferior to the original pattern and the procedure should continue. This ends up with three more more failure recombinations, illustrated in Figure 3. The chromosome 11110 is chosen in the next iteration starting with node 5. This time, the first recombination generates the global optimum solution 11111. The third, forth and fifth attemps of restricted mixing performed on $P_{1}$ are unnecessary, since they can be performed on the existing chromosome 11110 without wasting the first and second attemps. From another perspective, t the following back mixing operators drastically reduce the diversity. So it is important to avoid common trials in restricted mixing to preserve population diversity.   
-
-%The two subproblems have the same optimal pattern 111 and a second best pattern 000. Suppose the pattern 000000 already exists in the population. Without loss of generality, consider performing restricted mixing on a receiver 111000 with a ILS = $\langle\{1\};\{1,3\}, \{1,3,2\}, ...,\\ \{1,3,2,4,6,5\}\rangle$. Mask \{1\} and \{1,3\} leads to failure recombination since 011 and 010 have fitness less than pattern 111. After trying the third mask \{1,3,2\} on receiver 111000, the resulting chromosome 000000 already exists in the population. However, the restricted mixing process continues due to the inferior fitness of pattern 000000 compared to the fitness of receiver 111000, which contains one suboptimal. Mask \{1,3,2,4\} and \{1,3,2,4,6\} also leads to failure recombination. Finally, with the mask \{1,3,2,4,6,5\}, a chromosome 000111, which has equal fitness as the receiver 111000, is generated. This recombination is accepted and the receiver becomes the donor in back mixing that tries pattern 000111 on all the other chromosomes in the population. The pattern 000111 is the second best solution that is able to replace all patterns except for 111000 under the strict-improvement criterion of back mixing. If 111000 does not exist in the population, the algorithm failed with the first three bits of the population converged to the wrong pattern 000.  Even if 111000 exists in the population, the population might have already converged to only two patterns, 111000 and 000111. Then the back mixing operator switch to the equal-acceptance criterion and the algorithm failed with the population converged to the wrong pattern 000111.
-
-
-To prevent this situation, we terminate restricted mixing whenever the new generated chromosome already exists in the population. Another receiver along with another set of customized models are chosen for the next iteration of restricted mixing. This criterion preserves diversity in the population and also reduces NFE waste. The pseudocode of the modified restricted mixing is given in Algorithm 4.
 
 
 
@@ -550,6 +544,15 @@ $ f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})$}
 \end{tabular}
 \caption{Equations of the bechmark problems}
 \end{table*}
+
+For example, consider a five-bit trap problem with global optimum 11111 and local optimum 00000 in Figure 3. $P_{1}$ is chosen as receiver in restricted mixing. Suppose the masks in ILS follow the sequence \{1,2,3,4,5\} and the complement patterns for all five models exist in the population. Restricted mixing starts bit flipping with node 1 and failed since pattern 10110 is inferior to the original pattern 00110 in trap problems. After performing bit-flipping with the second mask \{1,2\}, the resulting pattern 11110 exists in the population($P_{3}$). Given the original termination criteria, 11110 is inferior to the original pattern and the procedure should continue. This ends up with three more more failure recombinations, illustrated in Figure 3. The chromosome 11110 is chosen in the next iteration starting with node 5. This time, the first recombination generates the global optimum solution 11111. The third, forth and fifth attemps of restricted mixing performed on $P_{1}$ are unnecessary, since they can be performed on the existing chromosome 11110 without wasting the first and second attemps. From another perspective, t the following back mixing operators drastically reduce the diversity. So it is important to avoid common trials in restricted mixing to preserve population diversity.   
+
+%The two subproblems have the same optimal pattern 111 and a second best pattern 000. Suppose the pattern 000000 already exists in the population. Without loss of generality, consider performing restricted mixing on a receiver 111000 with a ILS = $\langle\{1\};\{1,3\}, \{1,3,2\}, ...,\\ \{1,3,2,4,6,5\}\rangle$. Mask \{1\} and \{1,3\} leads to failure recombination since 011 and 010 have fitness less than pattern 111. After trying the third mask \{1,3,2\} on receiver 111000, the resulting chromosome 000000 already exists in the population. However, the restricted mixing process continues due to the inferior fitness of pattern 000000 compared to the fitness of receiver 111000, which contains one suboptimal. Mask \{1,3,2,4\} and \{1,3,2,4,6\} also leads to failure recombination. Finally, with the mask \{1,3,2,4,6,5\}, a chromosome 000111, which has equal fitness as the receiver 111000, is generated. This recombination is accepted and the receiver becomes the donor in back mixing that tries pattern 000111 on all the other chromosomes in the population. The pattern 000111 is the second best solution that is able to replace all patterns except for 111000 under the strict-improvement criterion of back mixing. If 111000 does not exist in the population, the algorithm failed with the first three bits of the population converged to the wrong pattern 000.  Even if 111000 exists in the population, the population might have already converged to only two patterns, 111000 and 000111. Then the back mixing operator switch to the equal-acceptance criterion and the algorithm failed with the population converged to the wrong pattern 000111.
+
+
+
+To prevent this situation, we terminate restricted mixing whenever the new generated chromosome already exists in the population. Another receiver along with another set of customized models are chosen for the next iteration of restricted mixing. This criterion preserves diversity in the population and also reduces NFE waste. The pseudocode of the modified restricted mixing is given in Algorithm 4.
+
 
 
 
