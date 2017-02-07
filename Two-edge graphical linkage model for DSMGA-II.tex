@@ -412,7 +412,7 @@ NK-S3 & 6.9  & 13.2  &42.3 & 48.8 \\\hline
 NK-S5 & 2.6  &6.7  &  8.9& 10.1 \\\hline
 
 \end{tabular}
-\caption{Supply length and BM failure comparison}
+\caption{Supply length and BM failure comparison (unit : k for NFE)}
 \end{table}
 
 
@@ -425,7 +425,7 @@ Furthermore, we also find the one-edge graph supply bound benefits restricted mi
 
 \begin{figure}
 \centering
-\includegraphics[width=3.3in]{IsinP}
+\includegraphics[width=3.1in]{IsinP}
 \caption{An example of early termination criteria. Population $ P $ is on the left, and receiver $ R  = P_{1} $ is on the right.}
 \end{figure}
 
@@ -483,7 +483,7 @@ $ILS\_two  \leftarrow ConstructILS($two-edge$)$
 
 \subsection{Early Termination Criterion}
 
-We propose a new termination criterion for restricted mixing that eliminates unnecessary trials and reduce NFE. During restricted mixing, the masks in the ILS are tried in an ascending order regarding to the mask size. If the new pattern gives worse fitness value than the original one, the receiver continues to try bit-flipping with the next larger mask. This bit-flipping process only terminates if the fitness of the generated chromosome is greater or equal to the fitness of the original receiver. However, this termination criterion might costs unnecessary evaluations since the recombination occasionally creates a chromosome that exists in the population. 
+We propose a new termination criterion for restricted mixing that eliminates unnecessary trials and reduces NFE. During restricted mixing, the masks in the ILS are tried in an ascending order regarding to the mask size. If the new pattern gives worse fitness value than the original one, the receiver continues to try bit-flipping with the next  mask. This bit-flipping process only terminates if the fitness of the generated chromosome is greater or equal to the fitness of the original receiver. However, this termination criterion might costs unnecessary evaluations since the recombination occasionally creates a chromosome that exists in the population. 
 
 
 
@@ -620,7 +620,7 @@ LT-GOMEA is performed without local searh to enhance its performance.%, describe
 \textbf{2D spin-glass}, $\ell = 784$ 	& 863.2&684.5&20.7\%\\ \hline
 \textbf{MAX-SAT}, $\ell = 200$ 			& 7593.3& 5655.1&25.5\%\\ \hline
 \end{tabular}
-\caption{Required NFE of DSMGA-II for the largest test problems (unit: K)}
+\caption{Required NFE of DSMGA-II for the largest test problems (unit: k)}
 \end{table}
 
 Comparing with the original DSMGA-II, the new DSMGA-II with our new techniques show superior performance on all six benchmark problems.
@@ -696,8 +696,7 @@ These models enable DSMGA-II to handle overlapping problems nicely.
 For results of Ising spin-glass problems in Figure 6, the slope of DSMGA-II decreases as the problem size increases. 
 This is due to the numerous numbers of plateaus in the spin-glass problems.
 As discussed in Section 4.3.1, converging the population for plateaus is where the advantages of DSMGA-II holds.
-Moreover, the slope indicates the overall fitness evaluation grows polynomially as $O(n^3)$, which is close to the best known results of problem-specific algorithm for Ising spin-glass~\cite{galluccio:pfaffian}.
-For MAX-SAT problems, although the NFE seems to grow exponentially, DSMGA-II still requires the fewest evalutions among the three algorithms.
+The MAX-SAT problems, although the NFE seems to grow exponentially, DSMGA-II still requires the fewest evalutions among the three algorithms.
 
 
 
@@ -716,8 +715,8 @@ Such improvement may be applied to other evolutionary algorithms as well; of cou
 
 \begin{figure}
 \centering
-\includegraphics[width=3.3in]{spin_satResults}
-\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for two instances with $\ell=100$ on MAX-SAT).}
+\includegraphics[width=3in]{spin_satResults}
+\caption{Scalability of DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for 2 out of 100 instances on $\ell=100$ on MAX-SAT).}
 \end{figure}
 %\end{document}  % This is where a 'short' article might terminate
 
