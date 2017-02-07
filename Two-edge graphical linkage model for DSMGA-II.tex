@@ -236,7 +236,7 @@ The length of the masks are also bounded to be no longer than half of the proble
 
 After \textit{supply check}, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. 
 If the fitness does not decrease after recombination, the pattern is accepted and restricted mixing terminates. 
-The receiver then becomes the donor of the new pattern for rest the population in back mixing. 
+The receiver then becomes the donor of the new pattern for the rest of the population in back mixing. 
 
 
 The idea behind restricted mixing is building-block supply~\cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. 
