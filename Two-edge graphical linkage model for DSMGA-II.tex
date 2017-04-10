@@ -23,60 +23,39 @@
 \author{
 % 1st. author
 \alignauthor
-Author\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \email{email}
-%Ping-Lin Chen\titlenote{These authors contributed equally to this work.}\\
-%       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
-%       \affaddr{Department of Electrical Engineering}\\
-%       \affaddr{National Taiwan University}\\
-%       \email{r04921043@ntu.edu.tw}
+Ping-Lin Chen\titlenote{These authors contributed equally to this work.}\\
+       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
+       \affaddr{Department of Electrical Engineering}\\
+       \affaddr{National Taiwan University}\\
+       \email{r04921043@ntu.edu.tw}
 %% 2nd. author
 \alignauthor
-Author\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \email{email}
-%\alignauthor
-%Chun-Jen Peng\titlenote{These authors contributed equally to this work.}\\
-%       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
-%       \affaddr{Department of Electrical Engineering}\\
-%       \affaddr{National Taiwan University}\\
-%       \email{r04921039@ntu.edu.tw}
+Chun-Jen Peng\titlenote{These authors contributed equally to this work.}\\
+       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
+       \affaddr{Department of Electrical Engineering}\\
+       \affaddr{National Taiwan University}\\
+       \email{r04921039@ntu.edu.tw}
 \and  % use '\and' if you need 'another row' of author names
 %% 3rd. author
 \alignauthor
-Author\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \email{email}
-%\alignauthor Chang-Yi Lu\\
-%       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
-%       \affaddr{Department of Electrical Engineering}\\
-%       \affaddr{National Taiwan University}\\
-%       \email{r03921053@ntu.edu.tw}
+Chang-Yi Lu\\
+       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
+       \affaddr{Department of Electrical Engineering}\\
+       \affaddr{National Taiwan University}\\
+       \email{r03921053@ntu.edu.tw}
 %% 4th. author
 \alignauthor
-Author\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \affaddr{Address}\\
-       \email{email}
-%\alignauthor Tian-Li Yu\\
-%       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
-%       \affaddr{Department of Electrical Engineering}\\
-%       \affaddr{National Taiwan University}\\
-%       \email{tianliyu@ntu.edu.tw}
+Tian-Li Yu\\
+       \affaddr{Taiwan Evolutionary Intelligence Laboratory}\\
+       \affaddr{Department of Electrical Engineering}\\
+       \affaddr{National Taiwan University}\\
+       \email{tianliyu@ntu.edu.tw}
 }
 
 
 \maketitle
 \begin{abstract}
-DSMGA-II, a model-based genetic algorithm, is capable of solving optimization problems via exploiting sub-structures of the problem. In terms of number of function evaluations (NFE), DSMGA-II has shown superior optimization ability to LT-GOMEA and hBOA on various benchmark problems as well as real-world problems. This paper proposes a two-edge graphical linkage model, which customizes recombination masks for each receiver according to its alleles, to further improve the performance of DSMGA-II.  The new linkage model is more expressive than the original dependency structure matrix (DSM), providing far more possible linkage combinations than the number of solutions in the search space. To reduce unnecessary function evaluations, the two-edge model is used along with the supply bounds from the original DSM. Some new techniques are also proposed to enhance the model selection efficiency and to reduce the probability of cross-competition. Combining these proposed techniques, the empirical results show up to 30\% of NFE reduction compared with the original DSMGA-II.
+DSMGA-II, a model-based genetic algorithm, is capable of solving optimization problems via exploiting sub-structures of the problem. In terms of number of function evaluations (NFE), DSMGA-II has shown superior optimization ability to LT-GOMEA and hBOA on various benchmark problems as well as real-world problems. This paper proposes a two-edge graphical linkage model, which customizes recombination masks for each receiver according to its alleles, to further improve the performance of DSMGA-II.  The new linkage model is more expressive than the original dependency structure matrix (DSM), providing far more possible linkage combinations than the number of solutions in the search space. To reduce unnecessary function evaluations, the two-edge model is used along with the supply bounds from the original DSM. Some new techniques are also proposed to enhance the model selection efficiency. Combining these proposed techniques, the empirical results show an average of 13\% NFE reduction on eight benchmark problems compared with the original DSMGA-II.
 \end{abstract}
 
 
@@ -127,12 +106,12 @@ Based on the dependency structure matrix (DSM), a new linkage model, called the 
 However, there is still room for improvement with model building in DSMGA-II. In this paper, we propose a two-edge graphical linkage model, which is more expressive than the original DSM and customizes recombination for every single chromosome. We also demonstrate how the early-stop criterion reduces unnecessary trials and yields fewer function evaluations.
 
 
-The remainder of this paper is organized as follows. Section 2 introduces the original DSMGA-II schema. Section 3 introduces the two-edge linkage model in detail, along with some new techniques to enhance mixing effectiveness. Section 4 shows the experiment results. Section 5 gives the summary and conclusion.
+The remainder of this paper is organized as follows. Section 2 introduces the original DSMGA-II. Section 3 introduces the two-edge linkage model in detail, along with some new techniques to enhance mixing effectiveness. Section 4 shows the experiment results. Section 5 gives the summary and conclusion.
 
 
 
 \section{DSMGA-II}
-In this section, we first introduce the framework of DSMGA-II and the concept of incremental linkage set. Then we details the restricted and back mixing operators, which are the kernel operators of DSMGA-II.
+In this section, we first introduce the framework of DSMGA-II and the concept of incremental linkage set. Then we detail the restricted and back mixing operators, which are the kernel operators of DSMGA-II.
 
 \begin{algorithm}
 \caption{DSMGA-II}\label{algo_disjdecomp}
@@ -180,18 +159,20 @@ $P \leftarrow$ \GHC{$P$} \\
 \subsection{Framework of DSMGA-II}
 DSMGA-II consists of four major components: pair-wise linkage detection, model building, restricted mixing and back mixing. 
 
-First, DSMGA-II randomly initializes a population. Then, in order to enhance the quality of pairwise linkage model and reduce the noise in the population, DSMGA-II performs a bit-flipping greedy hill climbing (GHC) on each chromosome. For each randomly initialized chromosome, GHC randomly flips each bit in the chromosome and evaluates its fitness. If the fitness improves, the chromosome accepts the change. Otherwise, the flipped bit is restored. Pairwise linkage detection was adopted in a later version of LTGA~\cite{pelikan:pairwise} and DSMGA~\cite{yu:DSMGA} due to its resistance to sampling noise. Performing GHC before linkage model building can further ensure the pairwise linkage information between genes, by ruling out trivial cases that can be solved without linkage information. 
+First, DSMGA-II randomly initializes a population. Then, in order to enhance the quality of pairwise linkage model and reduce the noise in the population, DSMGA-II performs a bit-flipping greedy hill climbing (GHC) on each chromosome. 
+%For each randomly initialized chromosome, GHC randomly flips each bit in the chromosome and evaluates its fitness. If the fitness improves, the chromosome accepts the change. Otherwise, the flipped bit is restored. 
+Pairwise linkage detection was adopted in a later version of LTGA~\cite{pelikan:pairwise} and DSMGA~\cite{yu:DSMGA} due to its resistance to sampling noise. Performing GHC before linkage model building can further ensure the pairwise linkage information between genes, by ruling out trivial cases that can be solved without linkage information. 
 
 
-After initializing the population, only the selected chromosomes are used to build the linkage model. The chromosomes are chosen by a tournament selection with selection pressure as 2, suggested in~\cite{yu:population}. DSMGA-II adopts mutual information as pairwise linkage measure and stores the linkage information in a DSM. The DSM is updated only once in each generation in order to prevent overfitting from frequent model building. Notice that tournament selection is only performed to choose chromosomes for model building instead of updating the population. Then recombinations via the restricted and back mixings are  proceeded with the original population.
+After initializing the population, only the selected chromosomes are used to build the linkage model. The chromosomes are chosen by a tournament selection with selection pressure as 2, suggested in~\cite{yu:population}. DSMGA-II adopts mutual information as pairwise linkage measure and stores the linkage information in a DSM. Notice that tournament selection is only performed to choose chromosomes for model building instead of updating the population. Then recombinations via the restricted and back mixings are  proceeded with the original population. The pseudo code of DSMGA-II is given in Algorithm 1.
 
 
-Before mixing, DSMGA-II builds the ILS with the linkage information stored in DSM. The ILS is a set of models indicating possible subproblem structures. In the restricted mixing, the receiver tries to flip the bits within the model. If the fitness does not decrease, the receiver becomes a donor during the back mixing, and the new pattern is tried on all chromosomes in the population. The population is randomly shuffled in advance so that each chromosome takes turns acting as the receiver during the restricted mixing and the donor during the back mixing. The pseudo code of DSMGA-II is given in Algorithm 1. The detailed implementations of the ILS and the mixing operators are described in the following sections. 
+%Before mixing, DSMGA-II builds the ILS with the linkage information stored in DSM. The ILS is a set of models indicating possible subproblem structures. In the restricted mixing, the receiver tries to flip the bits within the model. If the fitness does not decrease, the receiver becomes a donor during the back mixing, and the new pattern is tried on all chromosomes in the population. The population is randomly shuffled in advance so that each chromosome takes turns acting as the receiver during the restricted mixing and the donor during the back mixing. The pseudo code of DSMGA-II is given in Algorithm 1. The detailed implementations of the ILS and the mixing operators are described in the following sections. 
 
 
 
 \subsection{Incremental Linkage Set}
-The DSM is an adjacent matrix representing the dependency between two variables, where each entry stores the pairwise information between two bits. In DSMGA-II, pairwise dependencies are measured by mutual information~\cite{kullback:KL-diversion}. Formally, the mutual information of two random variable X and Y can be defined as:
+Before mixing, DSMGA-II builds the ILS with the linkage information stored in DSM. The DSM is an adjacent matrix representing the dependency between two variables, where each entry stores the pairwise information between two bits. In DSMGA-II, pairwise dependencies are measured by mutual information~\cite{kullback:KL-diversion}. Formally, the mutual information of two random variables X and Y can be defined as:
 
 \begin{displaymath} 
 I(X;Y) = \sum_{x \in X}\sum_{y \in Y} p(x,y)  log \frac{p(x,y)}{p(x) p(y)}, 
@@ -201,48 +182,24 @@ where x and y are the outcomes of X and Y. In pairwise information, the random v
 \begin{equation} 
 \begin{split}
 I(X;Y) &= P_{00 }log\frac{P_{00}}{P_{0*} P_{*0}} + P_{11 }log\frac{P_{11}}{P_{1*} P_{*1}}  \\
-	    &+ P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{10}}{P_{1*} P_{*0}}  
+	    &+ P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{10}}{P_{1*} P_{*0}},  
 \end{split}
 \end{equation}
-
+where $P_{xy}$ represents $p(x,y)$, and $P_{x*}$ represents $p(x,0)+p(x,1)$, etc.
 
 %The mutual information indicates how much the corresponding bits differ from most of the chromosomes in current population.
 The value of mutual information between two bits corresponds to the probability of two bits being in the same building-block.
-Therefore, DSMGA-II constructs building-blocks by clustering the DSM.
-Instead of using traditional hierarchical clustering algorithms proposed in~\cite{thierens:LTGA} or the average linkage clustering technique proposed in~\cite{thierens:OM}, DSMGA-II adopts a specific subgraph called approximation maximum-weight connected subgraph (AMWCS) to construct the ILS by iteratively adds the bit with maximum linkage into the graph.
-%For example, consider a  graph $G = (V, E), V = \{v1 ,v2, v3, v4\}$, the AMWCS $G_{s} =(V_{s}, E_{s}), V_{s} =\{v1 , v2\}$, and the candidate nodes $N =\{v3 ,v4\}$. The goal is to find a node from the candidate set with a greedy approach that maximizes the weight of AMWCS after insertion. The equation can be defined as : 
+Therefore, DSMGA-II constructs ILS by clustering the DSM.
+The ILS is a set of building-blocks indicating possible subproblem structures.
+Instead of using traditional hierarchical clustering algorithms proposed in~\cite{thierens:LTGA} or the average linkage clustering technique proposed in~\cite{thierens:OM}, DSMGA-II adopts a specific subgraph called approximation maximum-weight connected subgraph (AMWCS) to construct the ILS by iteratively adding the bit with maximum linkage into the graph~\cite{hsu:DSMGA2}.
+%For example, consider a  graph $G = (V, E), V = \{v1 ,v2, v3, v4\}$, the AMWCS $G_{s} =(V_{s}, E_{s}), V_{s} =\{v1 , v2\}$, and the candidate nodes $N =\{v3 ,v4\}$. The goal is to find a node from the candidate set with a greedy approach that maximizes the weight of AMWCS after insertion. The equation can be defined as: 
 
 %\begin{equation} \textit{index} = argmax_{i\in 3,4}\sum_{j=1}^{2} I(v_i;v_j) \end{equation}
 
 %The ILS  is an AMWCS constructed with a randomly chosen start node. For example, consider a problem with problem size  4, and its linkage model, i.e. the DSM, shown in Figure 1. The first step of constructing ILS is to choose a start node. Here, the index 1 was randomly chosen from $\{1, 2, 3, 4\}$. Then, the rest of nodes are inserted into AMWCS following the sequence $\{1,2,4,3\}$ that gives the maximum weight. After 3 iterations, the ILS is constructed as an ordered set $L = \langle\{1\}, \{1, 2\}, \{1, 2, 4\}, \{1, 2, 4, 3\} \rangle$. Each component of the ILS is called a mask, which is a potential  building-block in the mixing stage. 
 
 
-
-
-\subsection{Restricted Mixing and Back Mixing}
-
-\subsubsection{Optimal Mixing}
-Unlike canonical genetic algorithms that generate offsprings by recombining parental solutions, DSMGA-II extends the the idea of optimal mixing (OM)~\cite{thierens:OM} with two new mixing operators: the restricted mixing and the back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size~\cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
-
-
-\subsubsection{Restricted Mixing}
-
-In each iteration of the restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. 
-Each mask is a set of indices that indicates which bits should be flipped together during mixing operations. 
-All masks in the ILS must go through a \textit{supply check} to make sure that the complement pattern of the receiver exists in the population. 
-This way, flipping the bits is equivalent to recombining the receiver with the complement pattern. 
-The length of the masks are also bounded to be no longer than half of the problem size, since flipping the bits with a mask longer than $\ell/2$ is equivelent to performing mixing with a smaller mask on the complement chromosome. 
-
-
-After \textit{supply check}, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. 
-If the fitness does not decrease after recombination, the pattern is accepted, and the restricted mixing terminates. 
-The receiver then becomes a donor of the new pattern for the rest of the population during the back mixing. 
-
-
-The idea behind the restricted mixing is building-block supply~\cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, the restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. 
-The pseudo-code of the restricted mixing is provided in Algorithm~2.
-
-\begin{algorithm}
+\begin{algorithm}[t!]
 \caption{Restricted Mixing}\label{algo_disjdecomp}
 
 $V$: candidate vertices set, $V_S$: $AMWCS$ vertices set,  \\
@@ -292,11 +249,32 @@ remove $v$ from $V$ \\
 \end{algorithm}
 
 
-\subsubsection{Back Mixing}
+\subsection{Restricted Mixing and Back Mixing}
 
-During the back mixing, all the chromosomes in the population are mixed with the pattern accepted during the restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criterion is set differently from the restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement~\cite{bosman:LT-GOMEA}, have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criterion often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criterion. When no improvement occurs, it switches to the equal-acceptance criterion to reduce unnecessary evaluations on plateaus. The empirical results suggest that the back mixing is able to deal with plateaus. The pseudo-code of the back mixing is provided in Algorithm 3. 
+\subsubsection{Optimal Mixing}
+Unlike canonical genetic algorithms that generate offsprings by recombining parental solutions, DSMGA-II extends the idea of optimal mixing (OM)~\cite{thierens:OM} with two new mixing operators: the restricted mixing and the back mixing. OM evaluates a chromosome during recombination. With the information of fitness before and after mixing, the chromosome only accepts the change if its fitness improves. Thus, a noise-free decision-making can be achieved with a much smaller population size~\cite{goldberg:buildingblock}. Given overlapping building blocks, OM is also capable of solving problems with overlapping structures efficiently, since it acts like building-block wise local search.
 
-\begin{algorithm}
+
+\subsubsection{Restricted Mixing}
+
+In each iteration of the restricted mixing, a receiver is randomly picked from the population, and the building-blocks are provided by a mask which is chosen from the ILS. 
+Each mask is a set of indices that indicates which bits should be flipped together during mixing operations. 
+All masks in the ILS must go through a \textit{supply check} to make sure that the complement pattern of the receiver exists in the population. 
+This way, flipping the bits is equivalent to recombining the receiver with the complement pattern. 
+The masks are also bounded to be no longer than half of the problem size, since flipping the bits with a mask longer than $\ell/2$ is equivalent to performing mixing with a smaller mask on the complement chromosome. 
+
+
+After \textit{supply check}, the receiver starts with the smallest subset in the mask, and flips the bits within the subset. 
+If the fitness does not decrease after recombination, the pattern is accepted, and the restricted mixing terminates. 
+The receiver then becomes a donor of the new pattern for the rest of the population during the back mixing. 
+
+
+The idea behind the restricted mixing is building-block supply~\cite{goldberg:buildingblock}. We believe all the optimal subsolution fragments should exist in the current population, which had been initialized with a sufficient population size. Therefore, given the correct building block with a proper receiver, the restricted mixing conducts optimal mixing between the receiver and the chromosome with the complementary optimal pattern. 
+The pseudo-code of the restricted mixing is provided in Algorithm~2.
+It is identical to the pseudo-code given in the original paper~\cite{hsu:DSMGA2}, yet rewritten for comparison with the modified version described in Algorithm~4. 
+
+
+\begin{algorithm}[t!]
 \caption{Back Mixing}\label{algo_disjdecomp}
 
 $P$: population, $f$: evaluation function, \\
@@ -314,7 +292,7 @@ $improved  \leftarrow false$ \\
     $T \leftarrow P_j$ \\
     $T_M \leftarrow D_M$ \\
 
-    \eIf {$f(T) \geq f(P_j)$} {
+    \eIf {$f(T) > f(P_j)$} {
 
         $P_j \leftarrow T$ \\
         $improved  \leftarrow true$ \\
@@ -325,12 +303,18 @@ $improved  \leftarrow false$ \\
     }
 }
 \If {$not$ $improved$} {
-    accept all solutions in $E$ \\
+    update $P$ with all equal solutions in $E$ \\
 } 
 
 \Return $P$
 
 \end{algorithm} 
+
+\subsubsection{Back Mixing}
+
+During the back mixing, all the chromosomes in the population are mixed with the pattern accepted during the restricted mixing. Chromosomes are set to accept the new pattern only with strict fitness improvement by default. However, if no fitness improves in the whole population, then the mixing which results in equal fitness is also allowed. The back mixing acceptance criterion is set differently from the restricted mixing in order to tackle real-world problems with plateaus and basins. Many operators, such as the forced improvement~\cite{bosman:LT-GOMEA}, have been developed to deal with multiple equal-quality solutions. Strict mixing improvement criterion often causes numerous evaluations to jump out of the plateaus. On the other hand, allowing all chromosomes to accept the patterns with equal fitness results in a strong drifting effect. Back mixing handles the diversity issue with a default strict-improvement criterion. When no improvement occurs, it switches to the equal-acceptance criterion to reduce unnecessary evaluations on plateaus. The empirical results suggest that the back mixing is able to deal with plateaus. The pseudo-code of the back mixing is provided in Algorithm 3. 
+
+
 
 
 
@@ -340,7 +324,8 @@ $improved  \leftarrow false$ \\
 This section introduces the concept and the flow of AMWCS construction. In the original AMWCS, nodes are connected with only one linkage. We call this technique the one-edge graphical linkage model. In this section, we first describe the new linkage graph, called the two-edge graphical linkage model, which gives customized building-block models for each chromosome. Then, we discuss \textit{supply bound}, the theoretical support behind this measure. Finally, we provide some techniques that enhance the model selection efficiency and reduce the probability of cross-competition. 
 
 \subsection{Two-edge Graph}
-In the scheme of two-edge graph, the dependency measure between two bits is different from the original one-edge graph. The linkage measure equation is divided into two parts:
+%In the scheme of two-edge graph, the dependency measure between two bits is different from the original one-edge graph. The linkage measure equation is divided into two parts:
+In the scheme of two-edge graph, the linkage measure equation is divided into two parts:
 
 \begin{equation} 
 \begin{split}
@@ -349,7 +334,7 @@ L( 01 \cup 01 ) &= P_{01 }log\frac{P_{01}}{P_{0*} P_{*1}} + P_{10 }log\frac{P_{1
 \end{split}
 \end{equation}
 
-The reason for such division is to protect the pattern within each building-blocks. For building-blocks with linkage  $L(00\cup11)$, the pattern 00 might be flipped to pattern 11 and the pattern 11 might be flipped to pattern 00 during the restricted mixing. The resulting patterns, 00 and 11, are the complements of each other. Even though the patterns belong to different chromosomes after mixing, the original patterns are reserved in population. Same scenario happens with pattern 01 and 10.
+This division emphasizes the dependencies of different patterns among the same two bits. Unlike the original AMWCS that only considers the linkages between the bits, the two-edge graph identifies different dependencies among complementary patterns. It ensures that the complementary patterns with strong linkages are within the same building-block during ILS construction and preserved during mixing. For example, consider a building-block containing the linkage $L(00\cup11)$. For all chromosomes that adopt this building-block, there are only two patterns, 00 and 11, within the given two bits. The pattern 00 might be flipped to pattern 11 during the restricted mixing, and vice versa. Even though these two patterns belong to different chromosomes after mixing, the original patterns are preserved in the population. Same scenario happens with pattern 01 and 10.
 
 
 In the two-edge graph scheme, the equation for finding a node that maximize the weight of AMWCS is defined as:
@@ -372,13 +357,13 @@ L(X;Y) =
 \begin{figure}
 \centering
 \includegraphics[width=3.4in]{AMWCS}
-\caption{(a)  and (b) to (d) show the construction of  one-edge graph and two-edge graph, respectively. The value in each node represents the allele. The width of each edge corresponds to the strength of dependency measure between pairs. For (b) to (d), the gray and black edges represent the L(00$\cup$11) edge, while the pink and red edges represent the L(00$\cup$11) edge. Nodes and edges with color black or red represent the determined AMWCS.}
+\caption{(a)  and (b) to (d) show the construction of  one-edge graph and two-edge graph, respectively. The value in each node represents the allele. The width of each edge corresponds to the strength of dependency measure between pairs. For (b) to (d), the gray and black edges represent the L(00$\cup$11) edge, while the pink and red edges represent the L(01$\cup$10) edge. Nodes and edges with color black or red represent the determined AMWCS.}
 \end{figure}
 
 
 Figure 1 depicts different results of model construction with  a problem of three bits, and a receiver with alleles $\{0, 1, 0\}$. First, the node 1 with allele 0 was randomly chosen from the candidate set $\{1, 2, 3\}$. For the one-edge scheme in Figure 1(a), node 2 is selected with the strongest edge $\{1, 2\}$. After two iterations, the inserted node sequence of the AMWCS  is $Q = \langle\{1, 2, 3\}\rangle$, and the ILS is  $\langle\{1\}, \{1, 2\}, \\ \{1, 2, 3\}\rangle$. For the two-edge scheme in Figure~2(b), although there is a strong gray edge between nodes 1 and 2,  the pattern 10 conflicts with the meaning of the gray edges L(00$\cup$11). According to the linkage selection rule, the thin red edge $L(01\cup10)$ represents the linkage between nodes 1 and 2 with pattern 01. Therefore, after a receiver is determined in Figure 2(c), we remove all the conflict edges for clarity. Unlike the one-edge scheme, node 3, with the strongest edge $\{1, 3\}$, is picked in Figure 2(c). The inserted node sequence of the AMWCS is $Q = \langle\{1, 3, 2\}\rangle$,  and the ILS is $\langle\{1\}, \{1, 3\}, \{1, 3, 2\}\rangle$. In Figure 2(d), a receiver with pattern 001 and a random start node 1 are used in the two-edge graph construction. When another receiver is chosen, different conflict edges are removed, resulting in a customized ILS. Although the resulting ILS  $\langle\{1\}, \{1, 2\}, \{1, 2, 3\}\rangle$ is the same as one-edge graph in Figure 1(a), the two-edge graph is only constructed with non-conflict edges. 
 
-Consider a longer instance with an optimal subsolution 111 similar to the three-bit problem in Figure 1. Strong linkages can be detected among these three bits. Following the procedures described above, the one-edge graph constructs the ILS as $\langle\{1\}, \{1, 2\}, \{1, 2, 3\}\rangle$. However, None of mask in the ILS can flip the receiver with pattern 001 to 111. In short, even if one-edge graphical linkage model detects the correct model, it might still fail during mixing since the pattern might not be the optimal subsolution. On the other hand, two-edge graphical linkage model  handles this problem by taking the alleles of receivers into account and preserve the correct pattern during mixing. For the two-edge scheme, choosing the mask $\{1, 3\}$ can help flipping the pattern 010 to the the optimal subsolution 111.   
+Consider a longer instance with an optimal subsolution 111 similar to the three-bit problem in Figure 1. Strong linkages can be detected among these three bits. Following the procedures described above, the one-edge graph constructs the ILS as $\langle\{1\}, \{1, 2\}, \{1, 2, 3\}\rangle$. However, None of mask in the ILS can flip the receiver with pattern 001 to 111. In short, even if one-edge graphical linkage model detects the correct model, it might still fail during mixing since the pattern might not be the optimal subsolution. On the other hand, two-edge graphical linkage model  handles this problem by taking the alleles of receivers into account and preserve the correct pattern during mixing. For the two-edge scheme, choosing the mask $\{1, 3\}$ can help flipping the pattern 010 to the optimal subsolution 111.   
 
 We believe that the ratio of a pattern in the population corresponds to the possibility of such pattern being the optimal subsolution. The two-edge model tends to align the alleles of receiver  with the dominant patterns in the population. The reason for such tendency lies in the characteristic of mutual information. Since the mutual information between two bits is divided into two parts in the two-edge graph,  the  linkage containing the high-ratio pattern  is always positive, while the other part is often negative.  In the example above, if the optimal subsolution 111 is prominent in the population, then the linkages $L(00\cup11)$ among these nodes should be positive, and the linkages $L(01\cup10)$ are likely negative.  
 
@@ -393,13 +378,13 @@ We believe that the ratio of a pattern in the population corresponds to the poss
 
 
 \subsection{Supply bound}
-Although taking the receivers into account enhance the effectiveness of bit-flipping, we notice the two-edge scheme costs more evaluations in the mixing stage, especially during the back mixing. The reason behind this phenomenon is \textit{supply overfitting}. After selecting an edge in the two-edge graph, the possible patterns for each pair of bits are narrowed down to either $\{00, 11\}$ or $\{01, 10\}$. Besides, we choose the node that gives the maximum linkage during model construction, meaning that the two selected patterns should have higher ratio in the population. Therefore, given a model constructed by a two-edge graph implies a higher possibility of finding the complement pattern in the population. The models that are customized for a specific receiver a greater chance to pass the supply check. 
+Although taking the receivers into account enhances the effectiveness of bit-flipping, we notice the two-edge scheme costs more evaluations in the mixing stage, especially during the back mixing. The reason behind this phenomenon is \textit{supply overfitting}. After selecting an edge in the two-edge graph, the possible patterns for each pair of bits are narrowed down to either $\{00, 11\}$ or $\{01, 10\}$. Besides, we choose the node that gives the maximum linkage during model construction, meaning that the two selected patterns should have higher ratio in the population. Therefore, given a model constructed by a two-edge graph implies a higher possibility of finding the complement pattern in the population. The models that are customized for a specific receiver have a greater chance to pass the supply check. 
 
 
-Figures 2 demonstrate the supply bound difference between one-edge graph and two-edge graph for a receiver 010111. The one-edge graph has shorter supply length since the complement patterns do not exist in the population. The two-edge graph is customized for the receiver, thus has a higher possibility in finding the complement patterns. Compared to the model constructed by one-edge graph, the masks in the two-edge ILS are more likely to pass the supply check. 
+Figure 2 demonstrates the supply bound difference between one-edge graph and two-edge graph for a receiver 010111. The one-edge graph has shorter supply length since the complement patterns do not exist in the population. The two-edge graph is customized for the receiver, thus has a higher possibility in finding the complement patterns. Compared to the model constructed by one-edge graph, the masks in the two-edge ILS are more likely to pass the supply check. 
 
 
-\begin{table}[ht]
+\begin{table}[t!]
 \begin{tabular}{|c|c|c|c|c|}
 \hline
  &
@@ -412,26 +397,26 @@ NK-S3 & 6.9  & 13.2  &42.3 & 48.8 \\\hline
 NK-S5 & 2.6  &6.7  &  8.9& 10.1 \\\hline
 
 \end{tabular}
-\caption{Supply length and BM failure comparison (unit : K for NFE)}
+\caption{Supply length and Back Mixing failure comparison (unit : K evaluations).}
 \end{table}
 
 
-The customized model benefits the restricted mixing, but when the receiver becomes a donor during the back mixing, such customization often overfits the donor. The experiment results in Table 1 show that the average supply length of the two-edge graph is about twice longer than the one-edge counterpart. As a result, the supply bound from the two-edge graph fails to serve its original purpose: limiting the recombination trials. In addtion, the unnecessarily long patterns cause evaluation wastes and/or cross competition during the back mixing. 
+The customized model benefits the restricted mixing, but when the receiver becomes a donor during the back mixing, such customization often overfits the donor. The experiment results in Table 1 show that the average supply length of the two-edge graph is about twice longer than the one-edge counterpart. As a result, the supply bound from the two-edge graph fails to serve its original purpose: limiting the recombination trials. In addition, the unnecessarily long patterns cause evaluation wastes and/or cross competition during the back mixing. 
 
 
-To prevent the supply bound from overfitting the donor, we adopt the supply length of the one-edge graph as the supply bound. The major difference is that the linkage measure in the one-edge graph is calculated with complete mutual information, which gives the global information of the population. On the other hand, the linkage measure in the two-edge graph is more skewed that favors the given receiver during model building. Therefore, using the supply bound of the one-edge graph secures the global information between bits and does not over fit a specific chromosome. This gives a better result in back mixing and reduce NFE.
+To prevent the supply bound from overfitting the donor, we adopt the supply length of the one-edge graph as the supply bound. The major difference is that the linkage measure in the one-edge graph is calculated with complete mutual information, which gives the global information of the population. On the other hand, the linkage measure in the two-edge graph is more skewed that favors the given receiver during model building. Therefore, using the supply bound of the one-edge graph secures the global information between bits and does not overfit a specific chromosome. This gives a better result in back mixing and reduce NFE.
 
 
-Furthermore, we also find the one-edge graph supply bound benefits the restricted mixing by enhancing the success rate of recombination. We speculate that in the early generations, subproblem patterns with better fitness do not stand out from the average patterns. The dependency information in the population is rather unclear. The inaccurate models then increase the probability of failure for the restricted mixing. However, the restricted mixing operator is only terminated when the supply bound is reached of the after-mixing fitness of receiver is inferior to the original fitness. With the masks bounded by the one-edge graph supply length, unnecessary recombination trials can be reduced during the restricted mixing. 
+Furthermore, we also find the one-edge graph supply bound benefits the restricted mixing by enhancing the success rate of recombination. We speculate that in the early generations, subproblem patterns with better fitness do not stand out from the average patterns. The dependency information in the population is rather unclear. The inaccurate models then increase the probability of failure for the restricted mixing. However, the restricted mixing operator is only terminated when the supply bound is reached, or when the after-mixing fitness of the receiver is inferior to the original fitness. With the masks bounded by the one-edge graph supply length, unnecessary recombination trials can be reduced during the restricted mixing. 
 
-\begin{figure}
+\begin{figure}[t!]
 \centering
 \includegraphics[width=3.1in]{IsinP}
-\caption{An example of early-stop criterion. Population $ P $ is on the left, and receiver $ R  = P_{1} $ is on the right.}
+\caption{Early-stop criterion example.}
 \end{figure}
 
 
-\begin{algorithm}
+\begin{algorithm}[th!]
 \caption{Modified Restricted Mixing}\label{algo_disjdecomp}
 
 $ILS\_one$: one-edge incremental linkage set,\\
@@ -545,12 +530,12 @@ $ f_{k,i}^{subNK} (x_{i{\cdot}s+1},x_{i{\cdot}s+2},...x_{i{\cdot}s+k+1})$}
 2D Spin-glass & $f_{n}^{spin}(x) = -\sum_{i,j=0}^{n} x_{i}x_{j}J_{ij}$  &MAX-SAT   &   $F = \bigwedge_{i=1}^{m} \left (\bigvee_{j=1}^{k_{i}} \ell_{ij} \right )$\\\hline
 
 \end{tabular}
-\caption{Equations of the bechmark problems}
+\caption{Equations of the benchmark problems}
 \end{table*}
 
-For example, consider a five-bit trap problem with global optimum 11111 and local optimum 00000 in Figure 3. $P_{1}$ is chosen as receiver in the restricted mixing. Suppose the masks in ILS follow the sequence $\{1, 2, 3, 4, 5\}$ and the complement patterns for all five models exist in the population. Restricted mixing failed with mask $\{1\}, \{1, 2\}$ since the patterns are inferior to the original pattern 00110 in trap problems. After performing bit-flipping with the second mask $\{1, 2\}$, the resulted pattern 11110 exists in the chromosome $P_{3}$. The original stop criterion continues the procedure, ending up with three more more failure recombinations, $L_3, L_4,$ and $L_5$. 
-These attemps are unnecessary, since now they can be performed on the existing chromosome $P_{3}$. 
-Also, such unnecessary attempts may cause other chromosomes similar to $P_3$ and undesiredly reduce the diversity of the population.
+For example, consider a five-bit trap problem with global optimum 11111 and local optimum 00000 in Figure 3. $P_{1}$ is chosen as receiver in the restricted mixing. Suppose the masks in ILS follow the sequence $\{1, 2, 3, 4, 5\}$ and the complement patterns for all five models exist in the population. Restricted mixing failed with mask $\{1\}, \{1, 2\}$ since the patterns are inferior to the original pattern 00110 in trap problems. After performing bit-flipping with the second mask $\{1, 2\}$, the resulted pattern 11110 exists in the chromosome $P_{3}$. The original stop criterion continues the procedure, ending up with three more failure recombinations, $L_3, L_4,$ and $L_5$. 
+These attempts are unnecessary, since now they can be performed on the existing chromosome $P_{3}$. 
+Also, such unnecessary attempts may cause other chromosomes similar to $P_3$ and undesirably reduce the diversity of the population.
 
 
 To prevent from this situation, we terminate the restricted mixing whenever the new generated chromosome already exists in the population. Another receiver along with another set of customized models are chosen for the next iteration of the restricted mixing. This criterion preserves diversity in the population and also reduces NFE waste. The pseudocode of the modified restricted mixing is given in Algorithm 4.
@@ -567,13 +552,21 @@ In this section, we first briefly introduce the six benchmark problems for the f
 \subsection{Test Problems}
 Six types of linkage benchmark problems are used in this paper, including four classical linkage-underlying problems and two real-world problems. These benchmark problems each covers different aspects and characteristics of real-world problems. The \textit{Concatenated Trap} is composed of $m$ additively separable trap functions, each with $k$ variables~\cite{deb:sufficient}. It is well known that in order to solve trap problems, the underlying structure must be detected and preserved during mixing~\cite{thierens:mixing}. The \textit{Cyclic Trap} consists of overlapping trap functions with wraparound~\cite{yu:overlapping}. The \textit{Folded trap} is one of the multiple variants of \textit{NK-landscape} problems described in~\cite{goldberg:deception}. We use the bipolar deceptive function with the subsolution size $k = 6$. 
 %Each subsolution contains two global optima and lots of local optima. 
-The performance depends heavily on the ability of reducing unnecessary exploration of plateaus due to the symmetric characteristics of the trap function. The \textit{NK-landscape} functions are composed of overlapped and randomly generated sub-functions~\cite{pelikan:overlap}. Each instance is controlled by three parameters: the problem size $\ell$, the number of neighbors of one gene $k$, and the step size $s$, i.e. the offset of two adjacent sub-functions. We use \textit{NK-landscape} with step 1, 3 and 5 to represent problems with different degrees of overlapping in our experiments. The \textit{Ising spin-glass} gives a set of variables in one of the two states \{+1, -1\}. For each pair of neighboring spins $i$ and $j$, there exists a coupling constant $J_{ij}$. The goal is to find a combination of states that satisfies the most coupling pairs. The \textit{Maximum Satisfiability problem} (MAX-SAT) consists of a series of logical and clauses. Each clause contains a series of logical or variables. It is a classical NP-complete problem.  
+The performance depends heavily on the ability of reducing unnecessary exploration of plateaus due to the symmetric characteristics of the trap function. 
+The \textit{NK-landscape} functions are composed of overlapped and randomly generated sub-functions~\cite{pelikan:overlap}. 
+Each instance is controlled by three parameters: the problem size $\ell$, the number of neighbors of one gene $k$, and the step size $s$, i.e. the offset of two adjacent sub-functions.
+We use \textit{NK-landscape} with step 1, 3 and 5 to represent problems with different degrees of overlapping in our experiments.
+
+The \textit{Ising spin-glass} gives a set of variables in one of the two states \{+1, -1\}.
+For each pair of neighboring spins $i$ and $j$, there exists a coupling constant $J_{ij}$.
+The goal is to find a combination of states that satisfies the most coupling pairs.
+We also use the classical NP-complete The \textit{Maximum Satisfiability problem} (MAX-SAT).
 For our experiments, we use the Uniform Random-3-SAT instances from SATLIB\footnote{http://www.satlib.org} with all satisfiable clauses.
 
 
 
 \subsection{Experiment Setup}
-DSMGA-II is an enhanced edition of DSMGA and it outperforms multiple variants of its predecesors~\cite{yu:DSMGA} in all benchmark problems. 
+DSMGA-II is an enhanced edition of DSMGA and it outperforms multiple variants of its predecessor~\cite{yu:DSMGA} in all benchmark problems. 
 Thus, we will not discuss DSMGA in the following comparison.
 DSMGA-II is based on the idea of OM, so it is necessary to compare DSMGA-II with GOMEAs. 
 In our experiments, we use the version of LT-GOMEA with forced improvement \footnote{http://homepages.cwi.nl/$\sim$bosman/source\_code.php}.
@@ -598,109 +591,120 @@ The minimum evaluations required for each problem are averaged over 100 independ
 
 We compare DSMGA-II, LT-GOMEA, and hBOA under the following settings. 
 The selection pressure is set as 2 for all three algorithms. 
-For DSMGA-II, the model building is performed every $\ell/50$ generations.
-LT-GOMEA is performed without local searh to enhance its performance, as in~\cite{bosman:LT-GOMEA}.
+For DSMGA-II, the constant $R$ in Algorithm 1 is set to be $\ell/50$, as suggested in~\cite{hsu:DSMGA2}.
+LT-GOMEA is performed without local search to enhance its performance, as in~\cite{bosman:LT-GOMEA}.
 
 
 
 
 \subsection{Results and Discussions}
 
-Now we compare the modified DSMGA-II with the original one. The following comparisons are divided into three categories based on different characteristics of the problems. 
+Now we compare the modified DSMGA-II with the original one. The following comparisons are divided into three categories based on different characteristics of the problems. Our comparison focuses on the modifications differed from the original DSMGA-II. For reference, however, we also include the results of hBOA and LT-GOMEA. 
 
 \subsubsection{ Comparison on deceptive variants }
 
 
 We first consider the deceptive problems. The results are shown in Figure~\ref{fig:trap}.
-For the concatenated trap problem, there is little difference between the modified DSMGA-II and the original. It is because that the problem structure is relatively easy for DSMGA-II to learn, both subsolutions, 00000 and 11111, are clearly identified in the early stage. As a result, the 01-10 edge in the two-edge graph is rarely used. 
+For the concatenated trap problem, there is little difference between the modified DSMGA-II and the original. It is because that the problem structure is relatively easy for DSMGA-II to learn, both subsolutions, 00000 and 11111, are clearly identified in the early stage. As a result, the edge $L(01\cup10)$ is rarely used. 
 
 
-For the cyclic trap problem, the two-edge graph helps the linkage model grow toward to the correct direction. For instance, consider the pattern ``1111\textbf{0}0000'', and the ILS construction starts from the middle 0. The two-edge graph suggests the linkage mask to connect its right neighbor instead of its left neighbor since the 01-10 edge is much weaker than the 00-11 edge in the trap function. Therefore, a moderate evaluation reduction is achieved. 
+For the cyclic trap problem, the two-edge graph helps the linkage model grow toward to the correct direction. For instance, consider the pattern ``1111\textbf{0}0000'', and the ILS construction starts from the middle 0. The two-edge graph suggests the linkage mask to connect its right neighbor instead of its left neighbor since $L(01\cup10)$ is much weaker than $L(00\cup11)$ for the trap function. Therefore, a moderate evaluation reduction is achieved. 
 
-For the folded trap problem, the two-edge model helps aligned the receiver with the promenant pattern in population. The modified version more likely flips the plateau (such as 111000) to the correct subsolutions (000000 or 111111) than DSMGA-II with the orginal DSM. As a result, significant improvement can be produced. 
+For the folded trap problem, the two-edge model helps aligned the receiver with the prominent pattern in population. The modified version more likely flips the plateau (such as 111000) to the correct subsolutions (000000 or 111111) than DSMGA-II with the original DSM. As a result, significant improvement can be produced. 
 
 
-
-%For instance, consider a chromosome 111100000 with its model construction starting from the 5-th bit with allele 0.Both the one-edge and two-edge model detects a strong linkage between the four bits on the left and the four bits on the right.For the one-edge model, there is a fifty-fifty chance to choose a bit from the first four bits or the last four bits to add into the AMWCS. However, if one of the first four bits is chosen as the second node of AMWCS, all mixing attempts shall fail since flipping 11110 to 00001 results in worse fitness. To make matters even worse, cross-competition might occur if 111100000 is flipped to 000011111. This pattern might dominate the others in the population in back mixing by converging all first four bits to zeros. With the two-edge model, the linkages $L(01\cup10)$ between the 5-th bit and first four bits are going to be negative. The all 1s and all 0s patterns helps enhance the $L(00\cup11)$ linkage in the two-edge AMWCS graph. As a result, the second node must be selected from the last four bits, which has the same allele 0 as the 5-th bit. Once the correct model with five bits on the right is selected, the 111100000 can be flipped to global optimum.
 
 \begin{figure}
 \centering
 \includegraphics[width=3.3in]{trapResults}
-\caption{Scalability of the modified DSMGA-II, LT-GOMEA and hBOA on the problems of deceptive variants.}
+\caption{Scalability of the modified, the original DSMGA-II, LT-GOMEA and hBOA on the problems of deceptive variants.}
 \label{fig:trap}
 \end{figure}
 
 
-\subsubsection{Comparison on NK-landscape problems}
+\subsubsection{Comparison on the NK-landscape problems}
 
 \begin{figure}
 \centering
 \includegraphics[width=3.3in]{nkResults}
-\caption{Scalability of the modified DSMGA-II, LT-GOMEA and hBOA on the NK-landscape problems with various degrees of overlapping.}
+\caption{Scalability of the modified, the original DSMGA-II, LT-GOMEA and hBOA on NK-landscape with various degrees of overlapping.}
 \end{figure}
 
 
-The results of the NK series in Figure 5 demonstrate the ability of the ILS model in handling randomly generates overlapping problems. 
+The results of the NK series (Figure~5) demonstrate the ability of the ILS model in handling randomly generated overlapping problems. 
 The difference between the modified DSMGA-II and other algorithms enlarges as the degree of overlapping decreases. 
-When coping with severly overlapping structures, DSMGA-II requires more evaluations during graph refining process.
-Once the linkage information stands out, the back mixing operator allows the correct pattern to dominate the others in the population instantly. 
-The two-edge model provides far more linkage combinations than the number of solutions in the search space.
-Generating ILS from the abundant combinations in the two-edge graph results in more flexible and better customized models.
-These models enable DSMGA-II to handle overlapping problems nicely. 
+Our modifications do not improve DSMGA-II by much since the NK problems do not have clear structures to for two-edge graph to exploit. Nevertheless, our modifications still maintain the performance of the original algorithm. 
 
-\subsubsection{ Comparison on real-world problems }
+\subsubsection{ Comparison on two real-world problems }
 
+For the Ising spin-glass problem (Figure~6), the slope of DSMGA-II decreases as the problem size increases. 
+This is due to the numerous numbers of plateaus in the spin-glass problem.
+As for the MAX-SAT problem, while the NFE grows exponentially, which is reasonable since MAX-SAT is known to be NP-hard, the modified DSMGA-II still requires the fewest evaluations among all the algorithms. To sum up, the modified version yields fewer evaluations and better scalability on both problems. 
 
-
-For results of Ising spin-glass problems in Figure 6, the slope of DSMGA-II decreases as the problem size increases. 
-This is due to the numerous numbers of plateaus in the spin-glass problems.
-As discussed in Section 4.3.1, converging the population for plateaus is where the advantages of DSMGA-II holds.
-The MAX-SAT problems, while the NFE grows exponentially, which is reasonable since MAX-SAT is known to be NP-hard, the modified DSMGA-II still requires the fewest evalutions among the three algorithms.
-
+\begin{figure}
+\centering
+\includegraphics[width=3in]{spin_satResults}
+\caption{Scalability of the modified, the original DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT.}
+\end{figure}
 
 \subsubsection{ Comparison with the original DSMGA-II }
 
-\begin{table}[ht]
+\begin{table*}[ht]
 \centering
-\begin{tabular}{ |c|c|c|c| } \hline
-\textbf{Problems}& \textbf{Original} & \textbf{Modified} & \textbf{Ratio}\\ \hline
-\textbf{Concat. trap}, $\ell = 400$ 		& 554.1&554.9&9.4\%\\ \hline
-\textbf{Cyclic trap}, $\ell = 400$ 		& 123.1&111.5&9.4\%\\ \hline
-\textbf{Folded trap}, $\ell = 480$	 	& 354.5& 243.2&31.4\%\\ \hline
-\textbf{NK-S1}, $\ell = 400$ 				& 767.4& 701.6&8.5\%\\ \hline
-\textbf{NK-S3}, $\ell = 400$ 				& 550.5& 533.5&3.1\%\\ \hline
-\textbf{NK-S5}, $\ell = 400$ 				& 62.0& 59.5&4.1\%\\ \hline
-\textbf{2D spin-glass}, $\ell = 784$ 	& 863.2&684.5&20.7\%\\ \hline
-\textbf{MAX-SAT}, $\ell = 200$ 			& 7593.3& 5655.1&25.5\%\\ \hline
+\label{my-label}
+\begin{tabular}{lclcclccllr}
+\hline
+              &        &  & \multicolumn{2}{c}{Original} &  & \multicolumn{2}{c}{Modified} &  &        		&         		\\ \cline{4-5} \cline{7-8}
+Problem       & $\ell$ &  & $\mu$        & $\sigma$      &  & $\mu$        & $\sigma$      &  & $t$-test	& Improvement  \\ \hline
+Concat. trap  & 400    &  & 55.0         & 7.9           &  & 53.6         & 6.9           &  & ns     		& 2.52\%  \\
+Cyclic trap   & 400    &  & 123.2        & 18.8          &  & 113.2        & 13.7          &  & 4.29***  	& 8.13\%  \\
+Folded trap   & 480    &  & 354.6        & 11.4          &  & 243.7        & 6.0           &  & 47.89*** 	& 31.27\% \\
+NKs1          & 400    &  & 767.4        & 418.0         &  & 713.7        & 376.5         &  & ns     		& 7.00\%  \\
+NKs3          & 400    &  & 550.6        & 210.8         &  & 533.5        & 230.0         &  & ns  	   	& 3.10\%  \\
+NKs5          & 400    &  & 62.1         & 6.3           &  & 59.5         & 5.1           &  & 3.11***  	& 4.08\%  \\
+MAX-SAT       & 200    &  & 7887.6       & 12470.6       &  & 6291.3       & 10689.5       &  & ns    		& 20.24\% \\
+2D spin-glass & 784    &  & 863.2        & 505.0         &  & 683.3        & 321.4         &  & 2.99***	   & 20.85\% \\ 
+\hline 
+***$p<.005$. \\
+\multicolumn{11}{l}{$Note.$ $\ell$ = Problem Size. $\mu$ = Mean. $\sigma$ = Standard Deviation. $t$-test = Welch's t-test} \\
+\multicolumn{11}{l}{Improvement = $1 - \mu_{Original}/\mu_{Modified}$. ns = not significant.}
 \end{tabular}
-\caption{Required NFE of DSMGA-II for the largest test problems (unit: K)}
-\end{table}
-
-Compared with the original DSMGA-II, the modified DSMGA-II with our new techniques show superior performance on all six benchmark problems.
-In Table 3, comparison between our new techniques along with the original DSMGA-II are shown only with the largest problem size since the improvement is relatively minor with smaller problems. 
-The results indicate that the modified DSMGA-II with our new techniques can reduce NFE up to 30\% compared to the original DSMGA-II. 
+\caption{Required NFE of DSMGA-II for the largest test problems (unit : K evaluations)}
+\end{table*}
 
 
-Our new technique is most effective when dealing with the folded trap problem.
-The two-edge graph is capable of constructing customized models for a chosen receiver. 
-This characteristic shows great advantage when facing problems with multiple equal-quality subsolutions.
-Since the two-edge model tends to align with the most promenant pattern in the population, it costs fewer evaluations to jump out of plateaus by converging through stronger drifting effect.
 
 
-This characteristic is also helpful when solving the Ising spin-glass problems. 
+%\newcommand{\specialcell}[2][c]{%
+%  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+%  
+%\begin{table*}[ht]
+%\centering
+%\begin{tabular}{ |c|cc|cc|c| } \hline
+%\multirow{2}{*}{\textbf{Problems}}							& \multicolumn{2}{|c|}{\textbf{Original}}	& \multicolumn{2}{|c|}{\textbf{Modified}} 	& %\textbf{Reduce}	\\ %\hhline{~----~}
+%																& \textbf{Mean}		& \textbf{Std}			& \textbf{Mean}		& \textbf{Std}			& %\textbf{Ratio}	\\ \hline
+%\specialcell{\textbf{Concat. trap},		\\$\ell = 400$}	& 55.0					& 7.9					& 55.4					& 6.9					& 0\%				\\ \hline
+%\specialcell{\textbf{Cyclic trap}, 		\\$\ell = 400$} 	& 123.1					& 18.8					& 111.5					& 14.3					& 9.4\%				\\ \hline
+%\specialcell{\textbf{Folded trap}, 		\\$\ell = 480$	}	& 354.6					& 11.4					& 243.2					& 6.0					& 31.4\%			\\ \hline
+%\specialcell{\textbf{NK-S1},				\\$\ell = 400$} 	& 767.4					& 418.0					& 701.6					& 376.5					& 8.5\%				\\ \hline
+%\specialcell{\textbf{NK-S3},				\\$\ell = 400$} 	& 550.6					& 210.8					& 533.5					& 230.0					& 3.1\%				\\ \hline
+%\specialcell{\textbf{NK-S5},				\\$\ell = 400$} 	& 62.1					& 6.3					& 59.5					& 5.1					& 4.1\%				\\ \hline
+%\specialcell{\textbf{2D spin-glass},	\\$\ell = 784$	}	& 863.2					& 321.4					& 684.5					& 103.8					& 20.7\%			\\ \hline
+%\specialcell{\textbf{MAX-SAT},			\\$\ell = 200$} 	& 7887.6				& 12470.6				& 5655.1				& 10689.4				& 25.5\%			\\ \hline
+%\end{tabular}
+%\caption{Required NFE of DSMGA-II for the largest test problems (unit : K evaluations)}
+%\end{table*}
+
+Some of the improvements may not easily be observed from the above figures due to the logarithmic scale. Here we list the NFEs required to solve the largest problems in Table~3.  Compared with the original DSMGA-II, the modified version shows superior performance on all benchmark problems except the concatenated trap problem. The NFE reduction reaches up to 30\% when dealing with the folded trap problem.
+
+The two-edge graph constructs customized models for a chosen receiver. 
+This characteristic shows advantage when facing problems with plateaus.
+Since the two-edge model tends to align with the most prominent pattern in the population, fewer evaluations are needed to jump out of plateaus due to stronger drifting effect. This characteristic also helps when solving the Ising spin-glass problem. 
 There are often two equal-fitness subsolutions in the spin-glass problem.
 The original DSMGA-II can only detect the strong linkage of the subsolution without knowing the correct pattern of the subsolution to contribute to global fitness.
 This results in a significant waste of function evaluations on repeatedly flipping subsolution patterns to another equally fit subsolution.
 With the two-edge graph, different models can be generated from the same graph. 
 Empirically, this helps preserve the optimal patterns during mixing and reduce attempts of trying the complementary pattern.
-
-
-The modified DSMGA-II requires fewer evaluations than both LT-GOMEA and hBOA on all six benchmark problems.
-It is worth mentioning that most of the slope of DSMGA-II data line decreases as the problem size increases.
-This indicates that the modified DSMGA-II excels the original one in scalability.
-The following comparisons are divided into three categories according to different characteristics of the problems. 
-
-
 
 
 
@@ -717,16 +721,11 @@ We find it interesting that distribution of such centralized techniques (customi
 Such improvement may be applied to other evolutionary algorithms as well; of course,  further investigations, especially from the theoretical aspect, are needed.  
 
 
-\begin{figure}
-\centering
-\includegraphics[width=3in]{spin_satResults}
-\caption{Scalability of the modified DSMGA-II, LT-GOMEA and hBOA on Spin-glass and MAX-SAT (*LT-GOMEA fails to reach the global optima for 2 out of 100 instances on 100-bit  MAX-SAT).}
-\end{figure}
 %\end{document}  % This is where a 'short' article might terminate
 
 %ACKNOWLEDGMENTS are optional
-%\section{Acknowledgments}
-%The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 103-2221-E-002-177-MY2-1.
+\section{Acknowledgments}
+The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 103-2221-E-002-177-MY2-1.
 
 %
 % The following two commands are all you need in the
