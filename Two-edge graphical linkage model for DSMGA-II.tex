@@ -199,45 +199,48 @@ Instead of using traditional hierarchical clustering algorithms proposed in~\cit
 %The ILS  is an AMWCS constructed with a randomly chosen start node. For example, consider a problem with problem size  4, and its linkage model, i.e. the DSM, shown in Figure 1. The first step of constructing ILS is to choose a start node. Here, the index 1 was randomly chosen from $\{1, 2, 3, 4\}$. Then, the rest of nodes are inserted into AMWCS following the sequence $\{1,2,4,3\}$ that gives the maximum weight. After 3 iterations, the ILS is constructed as an ordered set $L = \langle\{1\}, \{1, 2\}, \{1, 2, 4\}, \{1, 2, 4, 3\} \rangle$. Each component of the ILS is called a mask, which is a potential  building-block in the mixing stage. 
 
 
+
 \begin{algorithm}[t!]
 \caption{Restricted Mixing}\label{algo_disjdecomp}
 
-$V$: candidate vertices set, $V_S$: $AMWCS$ vertices set,  \\
-$ILS$: incremental linkage set, $f$: evaluation function, \\
-$P$: population, $\ell$: problem size, \\
-$T$: trial solution, $M$: mask, \\
+$ILS$: incremental linkage set, $V$: candidate vertices set, \\
+$M$: mask, $f$: evaluation function, $P$: population, \\
+$\ell$: problem size, $T$: trial solution, \\
 ${R_M}$: pattern of $R$ extracted by $M$, \\
 ${R_M}'$: complement pattern of ${R_M}$
 
+\BlankLine
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{ $R$: receiver }
 \Output{ $R$: reciever, $M$: mask }
 
 \BlankLine
-%\tcp{ construct ILS }
+$ILS \leftarrow$ empty set \\
+$M \leftarrow$ empty list \\
 $V \leftarrow \{ 1, 2, ..., \ell \}$ \\
-%$V_S \leftarrow \{v$ | a random vertex $v \in V \}$ \\
-$V_s \leftarrow$ \{a random vertex $v \in V$\} \\
-remove $v$ from $V$ \\
+$v \leftarrow$ a random vertice in $V$ \\
 
-\While{$ |V| \geq \ell/2$} {
 
-    $ILS \leftarrow ILS \cup V_{S}$ \\
-    $V_S \leftarrow V_S$ $\cup$ \{  $v$ with the max {\it linkage} \} \\
-    %add the nearest vertex $v \in V$ into $AMWCS$ \\
-    
-    remove $v$ from $V$ \\
+\BlankLine
+\tcp{ ILS construction }
+\For{$i \leftarrow 1$ \KwTo $\lfloor \ell/2 \rfloor$} {
+    $M$.append($v$) \\
+    $ILS_{i} \leftarrow M$ \\
+    $V \leftarrow V - v$ \\
+
+    $v \leftarrow$ the vertice in $V$ with the {\it max linkage}\\
 }
 
 \BlankLine
-\For{$i \leftarrow 1$ \KwTo $|ILS|$} {
+\tcp{ mixing }
+\For{$i \leftarrow 1$ \KwTo $\lfloor \ell/2 \rfloor$} {
 
-    $M \leftarrow ILS_i$ \\
+    $M \leftarrow ILS_{i}$ \\
 
     \If {${R_M}' \subset P$} {
 
         $T \leftarrow R$ \\
-        $T_M \leftarrow {R_M}'$ \\
+        update $T$ with ${R_M}'$ \\
 
         \If {$f(T) \geq f(R)$ and $T \notin P$} {
             $R \leftarrow T$ \\
@@ -277,33 +280,40 @@ It is identical to the pseudo-code given in the original paper~\cite{hsu:DSMGA2}
 \begin{algorithm}[t!]
 \caption{Back Mixing}\label{algo_disjdecomp}
 
-$P$: population, $f$: evaluation function, \\
-$T$: trial solution, $E$: set of candidate solutions 
+$P$: population, $f$: evaluation function, $T$: trial solution, \\
+$E$: candidates, ${D_M}$: pattern of $D$ extracted by $M$ \\
 
+\BlankLine
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{ $D$: donor, $M$: mask }
 \Output{ $P$: population }
 
+
 \BlankLine
-
+$E \leftarrow$ empty set \\
 $improved  \leftarrow false$ \\
-\For{$j \leftarrow 1$ \KwTo $|P|$} {
 
-    $T \leftarrow P_j$ \\
-    $T_M \leftarrow D_M$ \\
+\BlankLine
+\For{$i \leftarrow 1$ \KwTo $|P|$} {
 
-    \eIf {$f(T) > f(P_j)$} {
+    $T \leftarrow P_i$ \\
+    update $T$ with ${D_M}$ \\
+    %$T_M \leftarrow D_M$ \\
 
-        $P_j \leftarrow T$ \\
+    \eIf {$f(T) > f(P_i)$} {
+
+        $P_i \leftarrow T$ \\
         $improved  \leftarrow true$ \\
     }{
-        \If {$f(T) = f(P_j)$} {
-            $E \leftarrow E \cup \{T\}$ \\
+        \eIf {$f(T) = f(P_i)$} {
+            $E_i \leftarrow T$ \\
+        }{
+			  $E_i \leftarrow P_i$ \\
         }
     }
 }
-\If {$not$ $improved$} {
-    update $P$ with all equal solutions in $E$ \\
+\If {not $improved$} {
+    $P \leftarrow E$ \\
 } 
 
 \Return $P$
@@ -409,11 +419,11 @@ To prevent the supply bound from overfitting the donor, we adopt the supply leng
 
 Furthermore, we also find the one-edge graph supply bound benefits the restricted mixing by enhancing the success rate of recombination. We speculate that in the early generations, subproblem patterns with better fitness do not stand out from the average patterns. The dependency information in the population is rather unclear. The inaccurate models then increase the probability of failure for the restricted mixing. However, the restricted mixing operator is only terminated when the supply bound is reached, or when the after-mixing fitness of the receiver is inferior to the original fitness. With the masks bounded by the one-edge graph supply length, unnecessary recombination trials can be reduced during the restricted mixing. 
 
-\begin{figure}[t!]
-\centering
-\includegraphics[width=3.1in]{IsinP}
-\caption{Early-stop criterion example.}
-\end{figure}
+%\begin{figure}[t!]
+%\centering
+%\includegraphics[width=3.1in]{IsinP}
+%\caption{Early-stop criterion example.}
+%\end{figure}
 
 
 \begin{algorithm}[th!]
@@ -467,9 +477,9 @@ $ILS\_two  \leftarrow ConstructILS($two-edge$)$
 \Return ($R$, $\emptyset$) 
 \end{algorithm}
 
-\subsection{Early-Stop Criterion}
+%\subsection{Early-Stop Criterion}
 
-We propose a new early-stop criterion for the restricted mixing that eliminates unnecessary trials and reduces NFE. During the restricted mixing, the masks in the ILS are tried in an ascending order regarding to the mask size. If the new pattern gives worse fitness value than the original one, the receiver continues to try bit-flipping with the next  mask. This bit-flipping process stops only if the fitness of the generated chromosome is greater or equal to the fitness of the original receiver. However, this stop criterion might cost unnecessary evaluations since the recombination occasionally creates a chromosome that exists in the population. 
+%We propose a new early-stop criterion for the restricted mixing that eliminates unnecessary trials and reduces NFE. During the restricted mixing, the masks in the ILS are tried in an ascending order regarding to the mask size. If the new pattern gives worse fitness value than the original one, the receiver continues to try bit-flipping with the next  mask. This bit-flipping process stops only if the fitness of the generated chromosome is greater or equal to the fitness of the original receiver. However, this stop criterion might cost unnecessary evaluations since the recombination occasionally creates a chromosome that exists in the population. 
 
 
 
@@ -667,7 +677,7 @@ MAX-SAT       & 200    &  & 7887.6       & 12470.6       &  & 6291.3       & 106
 \hline 
 ***$p<.005$. \\
 \multicolumn{11}{l}{$Note.$ $\ell$ = Problem Size. $\mu$ = Mean. $\sigma$ = Standard Deviation. $t$-test = Welch's t-test} \\
-\multicolumn{11}{l}{Improvement = $1 - \mu_{Original}/\mu_{Modified}$. ns = not significant.}
+\multicolumn{11}{l}{Improvement = $1 - \mu_{Modified}/\mu_{Original}$. ns = not significant.}
 \end{tabular}
 \caption{Required NFE of DSMGA-II for the largest test problems (unit : K evaluations)}
 \end{table*}
@@ -725,7 +735,7 @@ Such improvement may be applied to other evolutionary algorithms as well; of cou
 
 %ACKNOWLEDGMENTS are optional
 \section{Acknowledgments}
-The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 103-2221-E-002-177-MY2-1.
+The authors would like to thank the support by Ministry of Science and Technology in Taiwan under Grant No. MOST 105-2221-E-002-191.
 
 %
 % The following two commands are all you need in the
