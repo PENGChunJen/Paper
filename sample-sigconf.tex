@@ -7,8 +7,8 @@
 
 % Copyright
 %\setcopyright{none}
-%\setcopyright{acmcopyright}
-\setcopyright{acmlicensed}
+\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
 %\setcopyright{rightsretained}
 %\setcopyright{usgov}
 %\setcopyright{usgovmixed}
@@ -17,16 +17,17 @@
 
 
 % DOI
-\acmDOI{10.475/123_4}
+%\acmDOI{TBD}
 
 % ISBN
-\acmISBN{123-4567-24-567/08/06}
+%\acmISBN{TBD}
 
 %Conference
-\acmConference[GECCO '17]{the Genetic and Evolutionary Computation Conference 2017}{July 15--19, 2017}{Berlin, Germany}
-\acmYear{2017}
-\copyrightyear{2017}
-
+\copyrightyear{2017} 
+\acmYear{2017} 
+\setcopyright{acmcopyright}
+\acmConference{GECCO '17}{July 15-19, 2017}{Berlin, Germany}\acmPrice{15.00}\acmDOI{http://dx.doi.org/10.1145/3071178.3071236}
+\acmISBN{978-1-4503-4920-8/17/07}
 
 \begin{document}
 \title{Two-edge Graphical Linkage Model for DSMGA-II}
@@ -34,7 +35,8 @@
 
 
 \author{Ping-Lin Chen}
-\authornote{These authors contributed equally to this work.}
+%\authornote{These authors contributed equally to this work.}
+\LAA{These authors contributed equally to this work.}
 \affiliation{%
   \institution{Taiwan Evolutionary Intelligence Laboratory}
   \institution{Department of Electrical Engineering}
@@ -43,7 +45,8 @@
 \email{r04921043@ntu.edu.tw}
 
 \author{Chun-Jen Peng}%\raise0.5ex\hbox{\small{*}}}
-\authornote{These authors contributed equally to this work.}
+\LBB{This is my footnote!}
+%\authornote{These authors contributed equally to this work.}
 \affiliation{%
   \institution{Taiwan Evolutionary Intelligence Laboratory}
   \institution{Department of Electrical Engineering}
@@ -80,9 +83,9 @@ In terms of number of function evaluations (NFE), DSMGA-II has shown superior op
 This paper proposes a two-edge graphical linkage model, which customizes recombination masks for each receiver according to its alleles, to further improve the performance of DSMGA-II.  
 The new linkage model is more expressive than the original dependency structure matrix (DSM), providing far more possible linkage combinations than the number of solutions in the search space. 
 To reduce unnecessary function evaluations, the two-edge model is used along with the supply bounds from the original DSM. 
-%Some new techniques are also proposed to enhance the model selection efficiency. 
-%Combining these proposed techniques, the empirical results show an average of 13\% NFE reduction on eight benchmark problems compared with the original DSMGA-II.
-The empirical results show an average of 13\% NFE reduction on eight benchmark problems compared with the original DSMGA-II.
+Some new techniques are also proposed to enhance the model selection efficiency. 
+Combining these proposed techniques, the empirical results show an average of 12.2\% NFE reduction on eight benchmark problems compared with the original DSMGA-II.
+%The empirical results show an average of 13\% NFE reduction on eight benchmark problems compared with the original DSMGA-II.
 \end{abstract}
 
 %
@@ -95,7 +98,7 @@ The empirical results show an average of 13\% NFE reduction on eight benchmark p
 <concept>
 <concept_id>10010293.10010300.10010302</concept_id>
 <concept_desc>Machine learning approaches~Maximum entropy modeling</concept_desc>
-<concept_significance>500</concept_significance>
+<concept_significance>500</concept_significance>	
 </concept>
 <concept>
 <concept_id>10010293.10011809.10011812</concept_id>

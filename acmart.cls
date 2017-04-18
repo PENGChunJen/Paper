@@ -965,12 +965,19 @@ Computing Machinery]
       \stepcounter{footnote}\footnotetext{#1}}%
   \fi}
 \def\@authornotes{}
-\def\authornote#1{%
+\def\LAA#1{%
   \if@ACM@anonymous\else
+	\setcounter{footnote}{0}
     \g@addto@macro\addresses{\@authornotemark}
     \g@addto@macro\@authornotes{%
       \stepcounter{footnote}\footnotetext{#1}}%
-  \fi}
+  \fi}  
+\def\LBB#1{%
+	\setcounter{footnote}{0}
+	\if@ACM@anonymous\else
+	
+	\g@addto@macro\addresses{\setcounter{footnote}{0}\@authornotemark}
+	\fi}  
 \def\acmVolume#1{\def\@acmVolume{#1}}
 \acmVolume{1}
 \def\acmNumber#1{\def\@acmNumber{#1}}
